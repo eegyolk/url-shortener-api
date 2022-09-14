@@ -12,7 +12,7 @@ const checkCSRF = function (req, res, next) {
 
     const ipAddress = IPResolver.ipAddress(ip, headers);
     const csrfToken = Tokenize.makeCSRF(ipAddress, headers);
-    const xsrfToken = headers["x-xsrf-tokenx"];
+    const xsrfToken = headers["x-xsrf-token"];
 
     if (csrfToken === xsrfToken) {
       next();

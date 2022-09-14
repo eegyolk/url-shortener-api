@@ -7,9 +7,9 @@ const ResponseObject = require("../../Helpers/ResponseObject");
 const Tokenize = require("../../helpers/Tokenize");
 
 const getCSRFCookie = async (req, res) => {
-  try {
-    const { headers, ip } = req;
+  const { headers, ip } = req;
 
+  try {
     const ipAddress = IPResolver.ipAddress(ip, headers);
     const csrfToken = Tokenize.makeCSRF(ipAddress, headers);
 
@@ -18,9 +18,9 @@ const getCSRFCookie = async (req, res) => {
   } catch (err) {
     const responseObject = new ResponseObject(
       HttpCode.INTERNAL_SERVER_ERROR,
-      "",
       0,
-      1,
+      undefined,
+      err.code,
       err.message
     );
 

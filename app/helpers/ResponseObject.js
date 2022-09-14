@@ -1,9 +1,15 @@
-function ResponseObject(httpCode, data, status = 1, errorCode = 0, msg = "") {
+function ResponseObject(
+  httpCode,
+  status = 1,
+  data = undefined,
+  errorCode = 0,
+  message = ""
+) {
   this.httpCode = httpCode;
-  this.data = data;
   this.status = status;
+  this.data = data;
   this.errorCode = errorCode;
-  this.msg = msg;
+  this.message = message;
 }
 
 ResponseObject.prototype.getHttpCode = function () {
@@ -11,12 +17,21 @@ ResponseObject.prototype.getHttpCode = function () {
 };
 
 ResponseObject.prototype.getData = function () {
-  return {
-    status: this.status,
-    errorCode: this.errorCode,
-    message: this.msg,
-    data: this.data,
-  };
+  const data = { status: this.status };
+
+  if (this.data !== undefined) {
+    data["data"] = this.data;
+  }
+
+  if (this.errorCode) {
+    data["errorCode"] = this.errorCode;
+  }
+
+  if (this.message.length > 0) {
+    data["message"] = this.message;
+  }
+
+  return data;
 };
 
 module.exports = ResponseObject;

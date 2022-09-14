@@ -11,9 +11,9 @@ module.exports = {
   },
   name: "url-shortener-api.sid",
   proxy: false,
-  resave: false,
+  resave: true,
   rolling: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   secret: process.env.APP_SECRET_KEY,
   unset: "destroy",
 };

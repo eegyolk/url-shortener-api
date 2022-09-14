@@ -6,8 +6,8 @@ const bootstrap = require("../bootstrap/app"),
   env = bootstrap.appConfig.env,
   protocol = bootstrap.appConfig.protocol,
   domain = bootstrap.appConfig.domain,
-  port = bootstrap.appConfig.port;
-// log = bootstrap.logConfig;
+  port = bootstrap.appConfig.port,
+  log = bootstrap.logConfig;
 
 app.use(compression({ threshold: 0 }));
 app.use(express.json());
@@ -27,7 +27,7 @@ if (env !== "test") {
   });
 
   process.on("uncaughtException", (err, origin) => {
-    // log.error({ err, msg: "uncaught-exception" });
+    log.error({ err, msg: "uncaught-exception" });
 
     setTimeout(() => {
       process.exit(1);
@@ -35,11 +35,11 @@ if (env !== "test") {
   });
 
   process.on("uncaughtExceptionMonitor", (err, origin) => {
-    // log.error({ err, msg: "uncaught-exception-monitor" });
+    log.error({ err, msg: "uncaught-exception-monitor" });
   });
 
   process.on("unhandledRejection", (reason, promise) => {
-    // log.error({ err: reason, msg: "unhandled-rejection" });
+    log.error({ err: reason, msg: "unhandled-rejection" });
 
     setTimeout(() => {
       process.exit(1);

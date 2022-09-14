@@ -1,15 +1,17 @@
 require("dotenv").config();
 
 const { Model } = require("objection");
+const { v4: uuidv4 } = require("uuid");
 
 const appConfig = require("../config/app");
 const dbConfig = require("../config/db");
-
+const logConfig = require("../config/log");
 const webRoutes = require("../routes/web");
 
 module.exports.appConfig = appConfig;
+module.exports.logConfig = logConfig;
 
-module.exports.extendApp = function ({ app }) {
+module.exports.extendApp = ({ app }) => {
   // load knex instance to objection
   Model.knex(dbConfig.db);
 
@@ -18,6 +20,13 @@ module.exports.extendApp = function ({ app }) {
     app: appConfig,
     db: dbConfig.db,
   };
+
+  // application middleware for logging
+  app.use((req, res, next) => {
+    req.log = logConfig.child({ reqId: uuidv4() });
+    req.log.info({ req, body: req.body }, "access-log");
+    next();
+  });
 
   // implements routes
   app.use(webRoutes);

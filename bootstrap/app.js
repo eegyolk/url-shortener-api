@@ -6,6 +6,8 @@ const { v4: uuidv4 } = require("uuid");
 const appConfig = require("../config/app");
 const dbConfig = require("../config/db");
 const logConfig = require("../config/log");
+const apiRoutes = require("../routes/api");
+const appRoutes = require("../routes/app");
 const webRoutes = require("../routes/web");
 
 module.exports.appConfig = appConfig;
@@ -29,5 +31,7 @@ module.exports.extendApp = ({ app }) => {
   });
 
   // implements routes
-  app.use(webRoutes);
+  app.use("/api", apiRoutes);
+  app.use("/app", appRoutes);
+  app.use("/web", webRoutes);
 };

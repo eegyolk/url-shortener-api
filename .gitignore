@@ -30,3 +30,5 @@ yarn-error.log*
 
 # others
 .env
+storage/logs/*.log
+storage/logs/*.log.*

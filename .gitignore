@@ -32,3 +32,5 @@ yarn-error.log*
 .env
 storage/logs/*.log
 storage/logs/*.log.*
+storage/sessions/*.json
+storage/sessions/*.json.*

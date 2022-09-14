@@ -1,13 +1,17 @@
 require("dotenv").config();
 
 const cors = require("cors");
+const session = require("express-session");
 const { Model } = require("objection");
+const FileStore = require("session-file-store")(session);
 const { v4: uuidv4 } = require("uuid");
 
 const appConfig = require("../config/app");
 const corsConfig = require("../config/cors");
 const dbConfig = require("../config/db");
 const logConfig = require("../config/log");
+const sessionFileStoreConfig = require("../config/session-file-store");
+const sessionConfig = require("../config/session");
 const apiRoutes = require("../routes/api");
 const appRoutes = require("../routes/app");
 const webRoutes = require("../routes/web");
@@ -25,6 +29,16 @@ module.exports.extendApp = ({ app }) => {
     db: dbConfig.db,
     log: logConfig,
   };
+
+  // application middleware for session
+  if (appConfig.env === "prod") {
+    app.set("trust proxy", 1); // trust first proxy
+    sessionConfig.cookie.secure = true; // serve secure cookies
+    sessionConfig.proxy = true; // trust first proxy
+  }
+  app.use(
+    session({ store: new FileStore(sessionFileStoreConfig), ...sessionConfig })
+  );
 
   // application middleware for logging
   app.use((req, res, next) => {

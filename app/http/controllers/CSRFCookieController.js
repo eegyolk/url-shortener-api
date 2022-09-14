@@ -13,17 +13,20 @@ const getCSRFCookie = async (req, res) => {
     const ipAddress = IPResolver.ipAddress(ip, headers);
     const csrfToken = Tokenize.makeCSRF(ipAddress, headers);
 
-    res.cookie("XSRF-TOKEN", csrfToken);
+    // This token will expire in 5secs
+    res.cookie("XSRF-TOKEN", csrfToken, {
+      httpOnly: false,
+      maxAge: 1000 * 5,
+    });
     res.status(204).send();
   } catch (err) {
     const responseObject = new ResponseObject(
       HttpCode.INTERNAL_SERVER_ERROR,
       0,
       undefined,
-      err.code,
+      1,
       err.message
     );
-
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
 
     Logger.log(

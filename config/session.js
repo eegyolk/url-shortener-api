@@ -3,7 +3,7 @@ const path = require("path");
 module.exports = {
   cookie: {
     domain: process.env.SESSION_COOKIE_DOMAIN || "localhost",
-    httpOnly: true, // TODO: review for production
+    httpOnly: true,
     maxAge: 0, // TODO: review for production
     path: "/", // TODO: review for production
     sameSite: false, // TODO: review for production

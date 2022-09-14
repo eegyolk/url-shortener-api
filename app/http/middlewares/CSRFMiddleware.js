@@ -19,8 +19,8 @@ const checkCSRF = function (req, res, next) {
     } else {
       const responseObject = new ResponseObject(
         HttpCode.FORBIDDEN,
-        "",
         0,
+        undefined,
         1,
         "CSRF token missing or incorrect"
       );
@@ -29,12 +29,11 @@ const checkCSRF = function (req, res, next) {
   } catch (err) {
     const responseObject = new ResponseObject(
       HttpCode.INTERNAL_SERVER_ERROR,
-      "",
       0,
+      undefined,
       1,
       err.message
     );
-
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
 
     Logger.log(

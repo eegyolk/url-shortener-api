@@ -1,9 +1,9 @@
 const path = require("path");
 
-const HttpCode = require("../../Helpers/HttpCode");
-const IPResolver = require("../../Helpers/IPResolver");
-const Logger = require("../../Helpers/Logger");
-const ResponseObject = require("../../Helpers/ResponseObject");
+const HttpCode = require("../../helpers/HttpCode");
+const IPResolver = require("../../helpers/IPResolver");
+const Logger = require("../../helpers/Logger");
+const ResponseObject = require("../../helpers/ResponseObject");
 const Tokenize = require("../../helpers/Tokenize");
 
 const getCSRFCookie = async (req, res) => {

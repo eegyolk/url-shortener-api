@@ -1,9 +1,11 @@
 require("dotenv").config();
 
+const cors = require("cors");
 const { Model } = require("objection");
 const { v4: uuidv4 } = require("uuid");
 
 const appConfig = require("../config/app");
+const corsConfig = require("../config/cors");
 const dbConfig = require("../config/db");
 const logConfig = require("../config/log");
 const apiRoutes = require("../routes/api");
@@ -21,6 +23,7 @@ module.exports.extendApp = ({ app }) => {
   app.locals.config = {
     app: appConfig,
     db: dbConfig.db,
+    log: logConfig,
   };
 
   // application middleware for logging
@@ -29,6 +32,23 @@ module.exports.extendApp = ({ app }) => {
     req.log.info({ req, body: req.body }, "access-log");
     next();
   });
+
+  // application middleware for cors
+  const corsOptionsDelegate = (req, callback) => {
+    const corsOptions = {
+      origin: false,
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+      credentials: true,
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+    };
+
+    corsOptions.origin =
+      corsConfig.allowedOrigin.indexOf(req.headers["origin"]) !== -1;
+
+    callback(null, corsOptions);
+  };
+  app.use(cors(corsOptionsDelegate));
 
   // implements routes
   app.use("/api", apiRoutes);

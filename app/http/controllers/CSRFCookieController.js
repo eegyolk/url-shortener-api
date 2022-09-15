@@ -13,7 +13,7 @@ const getCSRFCookie = async (req, res) => {
     if (session.auth) {
       const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
       req.session.auth = {
-        user,
+        user: session.auth.user,
         csrf: csrfToken,
       };
       req.session.save(function (err) {

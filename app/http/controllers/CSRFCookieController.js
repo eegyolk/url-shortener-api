@@ -10,14 +10,32 @@ const getCSRFCookie = async (req, res) => {
   const { headers, ip } = req;
 
   try {
-    const ipAddress = IPResolver.ipAddress(ip, headers);
-    const csrfToken = Tokenize.makeCSRF(ipAddress, headers);
+    if (req.session.auth) {
+      const { user } = req.session.auth;
+      const csrfToken = Tokenize.makeAuthCSRF(Date.now(), user);
+      req.session.auth = {
+        user,
+        csrf: csrfToken,
+      };
+      req.session.save(function (err) {
+        if (err) {
+          throw new Error("Unable to save session");
+        }
+      });
+      res.cookie("XSRF-TOKEN", csrfToken, {
+        httpOnly: false,
+        maxAge: 1000 * 60 * 60, // 1 hour validity
+      });
+    } else {
+      const ipAddress = IPResolver.ipAddress(ip, headers);
+      const csrfToken = Tokenize.makeCSRF(ipAddress, headers);
 
-    // This token will expire in 5secs
-    res.cookie("XSRF-TOKEN", csrfToken, {
-      httpOnly: false,
-      maxAge: 1000 * 5,
-    });
+      res.cookie("XSRF-TOKEN", csrfToken, {
+        httpOnly: false,
+        maxAge: 1000 * 5, // 5 secs validity
+      });
+    }
+
     res.status(204).send();
   } catch (err) {
     const responseObject = new ResponseObject(

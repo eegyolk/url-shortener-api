@@ -18,7 +18,45 @@ const checkCSRF = function (req, res, next) {
       next();
     } else {
       const responseObject = new ResponseObject(
-        HttpCode.FORBIDDEN,
+        HttpCode.TOKEN_MISMTACH,
+        0,
+        undefined,
+        1,
+        "CSRF token missing or incorrect"
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+    }
+  } catch (err) {
+    const responseObject = new ResponseObject(
+      HttpCode.INTERNAL_SERVER_ERROR,
+      0,
+      undefined,
+      1,
+      err.message
+    );
+    res.status(responseObject.getHttpCode()).json(responseObject.getData());
+
+    Logger.log(
+      Logger.LEVEL.ERROR,
+      {
+        err,
+        msg: `Error occurred in ${path.basename(__filename)}:getHistory()`,
+      },
+      req.log
+    );
+  }
+};
+
+const checkAuthCSRF = function (req, res, next) {
+  try {
+    const { session } = req;
+    const xsrfToken = headers["x-xsrf-token"];
+
+    if (session.auth.csrf === xsrfToken) {
+      next();
+    } else {
+      const responseObject = new ResponseObject(
+        HttpCode.TOKEN_MISMTACH,
         0,
         undefined,
         1,
@@ -49,4 +87,5 @@ const checkCSRF = function (req, res, next) {
 
 module.exports = {
   checkCSRF,
+  checkAuthCSRF,
 };

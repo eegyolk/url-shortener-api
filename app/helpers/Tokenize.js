@@ -34,6 +34,22 @@ const makeCSRF = (resolvedIp, headers) => {
   return hash.toString(crypto.enc.Base64);
 };
 
+const makeAuthCSRF = (timestamp, userData) => {
+  const tempUserData = Object.keys(userData)
+    .sort()
+    .map(item => userData[item]);
+
+  tempUserData.push(timestamp);
+
+  const hash = crypto.HmacSHA512(
+    `${tempUserData.join(",")}`,
+    appConfig.secretKey
+  );
+
+  return hash.toString(crypto.enc.Base64);
+};
+
 module.exports = {
   makeCSRF,
+  makeAuthCSRF,
 };

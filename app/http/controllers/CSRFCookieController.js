@@ -7,12 +7,11 @@ const ResponseObject = require("../../helpers/ResponseObject");
 const Tokenize = require("../../helpers/Tokenize");
 
 const getCSRFCookie = async (req, res) => {
-  const { headers, ip } = req;
+  const { session, headers, ip } = req;
 
   try {
-    if (req.session.auth) {
-      const { user } = req.session.auth;
-      const csrfToken = Tokenize.makeAuthCSRF(Date.now(), user);
+    if (session.auth) {
+      const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
       req.session.auth = {
         user,
         csrf: csrfToken,

@@ -45,25 +45,13 @@ const signIn = async (req, res) => {
       return;
     }
 
-    if (!user.verified_at) {
+    if (user.deleted_at) {
       const responseObject = new ResponseObject(
         HttpCode.OK,
         0,
         undefined,
         SignInService.errors[2].code,
         SignInService.errors[2].message
-      );
-      res.status(responseObject.getHttpCode()).json(responseObject.getData());
-      return;
-    }
-
-    if (user.deleted_at) {
-      const responseObject = new ResponseObject(
-        HttpCode.OK,
-        0,
-        undefined,
-        SignInService.errors[3].code,
-        SignInService.errors[3].message
       );
       res.status(responseObject.getHttpCode()).json(responseObject.getData());
       return;

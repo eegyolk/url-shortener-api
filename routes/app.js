@@ -19,7 +19,7 @@ router.get("/csrf-cookie", CSRFCookieController.getCSRFCookie);
 router.post("/sign-in", CSRFMiddleware.checkCSRF, SignInController.signIn);
 router.get(
   "/me",
-  [CSRFMiddleware.checkAuthCSRF, AuthMiddleware.checkAuth],
+  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
   MeController.getMe
 );
 

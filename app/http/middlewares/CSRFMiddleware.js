@@ -49,7 +49,7 @@ const checkCSRF = function (req, res, next) {
 
 const checkAuthCSRF = function (req, res, next) {
   try {
-    const { session } = req;
+    const { session, headers } = req;
     const xsrfToken = headers["x-xsrf-token"];
 
     if (session.auth.csrf === xsrfToken) {

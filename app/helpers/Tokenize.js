@@ -1,4 +1,5 @@
 const crypto = require("crypto-js");
+const jwt = require("jsonwebtoken");
 const appConfig = require("../../config/app");
 
 const makeCSRF = (resolvedIp, headers) => {
@@ -49,7 +50,17 @@ const makeAuthCSRF = (timestamp, userData) => {
   return hash.toString(crypto.enc.Base64);
 };
 
+const makeVerificationToken = data => {
+  const token = jwt.sign(data, appConfig.secretKey, {
+    expiresIn: "1d",
+  });
+  const md5 = crypto.MD5(token);
+
+  return { token, md5: md5.toString() };
+};
+
 module.exports = {
   makeCSRF,
   makeAuthCSRF,
+  makeVerificationToken,
 };

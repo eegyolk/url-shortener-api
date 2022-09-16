@@ -6,6 +6,7 @@ const { Model } = require("objection");
 const FileStore = require("session-file-store")(session);
 const { v4: uuidv4 } = require("uuid");
 
+const MailerEvent = require("../app/events/MailerEvent");
 const appConfig = require("../config/app");
 const corsConfig = require("../config/cors");
 const dbConfig = require("../config/db");
@@ -23,11 +24,12 @@ module.exports.extendApp = ({ app }) => {
   // load knex instance to objection
   Model.knex(dbConfig.db);
 
-  // attach configuration in app so it can be accessed anywhere
-  app.locals.config = {
-    app: appConfig,
-    db: dbConfig.db,
-    log: logConfig,
+  // initialize event
+  const mailerEvent = new MailerEvent();
+  mailerEvent.init();
+  // attach event in app
+  app.locals.event = {
+    mailer: mailerEvent,
   };
 
   // application middleware for session

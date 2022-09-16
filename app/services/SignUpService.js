@@ -40,10 +40,10 @@ const createUser = async body => {
       id: newUser.id,
       full_name: newUser.full_name,
       email_address: newUser.email_address,
-      sso_provider: newUser.sso_provider,
-      image_url: newUser.image_url,
-      country: newUser.country,
-      verified_at: newUser.verified_at,
+      sso_provider: newUser.sso_provider || null,
+      image_url: newUser.image_url || "",
+      country: newUser.country || "",
+      verified_at: newUser.verified_at || null,
       logged_in_at: newUser.logged_in_at,
     };
   }

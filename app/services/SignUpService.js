@@ -1,5 +1,8 @@
 const moment = require("moment");
+
+const urlShortenerAppConfig = require("../../config/urlShortenerApp");
 const Password = require("../helpers/Password");
+const Tokenize = require("../helpers/Tokenize");
 const Users = require("../models/Users");
 
 const rules = {
@@ -28,12 +31,20 @@ const isEmailAddressExists = async emailAddress => {
 const createUser = async body => {
   const { fullName, emailAddress, password } = body;
 
-  const newUser = await Users.query().insert({
+  const data = {
     full_name: fullName,
     email_address: emailAddress,
     password: Password.make(password),
     logged_in_at: moment().format(),
-  });
+  };
+  const temp = Object.assign({}, data);
+  delete temp.password;
+
+  const { token, md5 } = Tokenize.makeVerificationToken(temp);
+  data["verification_token"] = token;
+  data["verification_md5"] = md5;
+
+  const newUser = await Users.query().insert(data);
 
   if (newUser) {
     return {
@@ -43,6 +54,7 @@ const createUser = async body => {
       sso_provider: newUser.sso_provider || null,
       image_url: newUser.image_url || "",
       country: newUser.country || "",
+      verification_md5: newUser.verification_md5,
       verified_at: newUser.verified_at || null,
       logged_in_at: newUser.logged_in_at,
     };
@@ -51,9 +63,28 @@ const createUser = async body => {
   return;
 };
 
+const sendVerificationLink = (mailerEvent, body, verificationMD5) => {
+  const { fullName, emailAddress } = body;
+
+  const urlShortenerAppLink = `${urlShortenerAppConfig.protocol}://${
+    urlShortenerAppConfig.domain
+  }${urlShortenerAppConfig.port ? `:${urlShortenerAppConfig.port}` : ""}`;
+
+  mailerEvent.emit(
+    emailAddress,
+    `Hi ${fullName}, welcome to ctrl.ph`,
+    "sign-up-verification-link",
+    {
+      fullName,
+      verificationLink: `${urlShortenerAppLink}/verify-email-address?q=${verificationMD5}`,
+    }
+  );
+};
+
 module.exports = {
   rules,
   errors,
   isEmailAddressExists,
   createUser,
+  sendVerificationLink,
 };

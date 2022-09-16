@@ -9,7 +9,7 @@ const Validation = require("../../helpers/Validation");
 const SignUpService = require("../../services/SignUpService");
 
 const signUp = async (req, res) => {
-  const { body } = req;
+  const { body, app } = req;
   const rules = SignUpService.rules;
 
   try {
@@ -31,8 +31,6 @@ const signUp = async (req, res) => {
       return;
     }
 
-    // TODO: sending of email verification link
-
     const newUser = await SignUpService.createUser(body);
     if (!newUser) {
       throw new Error("Unable to create user record");
@@ -53,6 +51,13 @@ const signUp = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
+    SignUpService.sendVerificationLink(
+      app.locals.event.mailer,
+      body,
+      newUser.verification_md5
+    );
+
+    delete newUser.verification_md5;
     const responseObject = new ResponseObject(HttpCode.OK, 1, newUser);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {

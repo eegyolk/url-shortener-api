@@ -40,9 +40,9 @@ const createUser = async body => {
   const temp = Object.assign({}, data);
   delete temp.password;
 
-  const { token, md5 } = Tokenize.makeVerificationToken(temp);
+  const { token, base64 } = Tokenize.makeVerificationToken(temp);
   data["verification_token"] = token;
-  data["verification_md5"] = md5;
+  data["verification_base64"] = base64;
 
   const newUser = await Users.query().insert(data);
 
@@ -54,7 +54,7 @@ const createUser = async body => {
       sso_provider: newUser.sso_provider || null,
       image_url: newUser.image_url || "",
       country: newUser.country || "",
-      verification_md5: newUser.verification_md5,
+      verification_base64: newUser.verification_base64,
       verified_at: newUser.verified_at || null,
       logged_in_at: newUser.logged_in_at,
     };
@@ -63,7 +63,7 @@ const createUser = async body => {
   return;
 };
 
-const sendVerificationLink = (mailerEvent, body, verificationMD5) => {
+const sendVerificationLink = (mailerEvent, body, verificationBase64) => {
   const { fullName, emailAddress } = body;
 
   const urlShortenerAppLink = `${urlShortenerAppConfig.protocol}://${
@@ -76,7 +76,7 @@ const sendVerificationLink = (mailerEvent, body, verificationMD5) => {
     "sign-up-verification-link",
     {
       fullName,
-      verificationLink: `${urlShortenerAppLink}/verify-email-address?q=${verificationMD5}`,
+      verificationLink: `${urlShortenerAppLink}/verify-email-address?q=${verificationBase64}`,
     }
   );
 };

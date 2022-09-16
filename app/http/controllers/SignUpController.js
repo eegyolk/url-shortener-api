@@ -54,10 +54,10 @@ const signUp = async (req, res) => {
     SignUpService.sendVerificationLink(
       app.locals.event.mailer,
       body,
-      newUser.verification_md5
+      newUser.verification_base64
     );
 
-    delete newUser.verification_md5;
+    delete newUser.verification_base64;
     const responseObject = new ResponseObject(HttpCode.OK, 1, newUser);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {

@@ -54,9 +54,9 @@ const makeVerificationToken = data => {
   const token = jwt.sign(data, appConfig.secretKey, {
     expiresIn: "1d",
   });
-  const md5 = crypto.MD5(token);
+  const hash = crypto.SHA512(token);
 
-  return { token, md5: md5.toString() };
+  return { token, base64: hash.toString(crypto.enc.Base64) };
 };
 
 module.exports = {

@@ -32,6 +32,7 @@ const updateUser = async id => {
   const patched = await Users.query()
     .patch({
       logged_in_at: moment().format(),
+      updated_at: moment().format(),
     })
     .findById(id);
 

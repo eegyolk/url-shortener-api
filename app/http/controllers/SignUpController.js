@@ -79,7 +79,7 @@ const signUp = async (req, res) => {
       Logger.LEVEL.ERROR,
       {
         err,
-        msg: `Error occurred in ${path.basename(__filename)}:getHistory()`,
+        msg: `Error occurred in ${path.basename(__filename)}:signUp()`,
       },
       req.log
     );

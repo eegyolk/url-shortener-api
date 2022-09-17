@@ -1,5 +1,6 @@
 const moment = require("moment");
 
+const appConfig = require("../../config/app");
 const urlShortenerAppConfig = require("../../config/urlShortenerApp");
 const Password = require("../helpers/Password");
 const Tokenize = require("../helpers/Tokenize");
@@ -72,9 +73,11 @@ const sendVerificationLink = (mailerEvent, body, verificationBase64) => {
 
   mailerEvent.emit(
     emailAddress,
-    `Hi ${fullName}, welcome to ctrl.ph`,
+    `Hi ${fullName}, welcome to ${appConfig.name}`,
     "sign-up-verification-link",
     {
+      appName: appConfig.name,
+      appSupportEmail: appConfig.supportEmail,
       fullName,
       verificationLink: `${urlShortenerAppLink}/verify-email-address?q=${verificationBase64}`,
     }

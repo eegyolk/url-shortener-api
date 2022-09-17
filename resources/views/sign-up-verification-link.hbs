@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>ctrl.ph - Verification Link</title>
+    <title>{{appName}} - Verification Link</title>
     <meta
       name="description"
       content="Received this email after a successful sign up."
@@ -17,15 +17,16 @@
   </head>
   <body>
     <div class="logo">
-      <h1>ctrl.ph</h1>
+      <h1>{{appName}}</h1>
     </div>
     <div class="thank-you">
       <h3>Hi {{fullName}},</h3>
     </div>
 
     <div class="message">
-      <p>Thank you for signing up! To start exploring the ctrl.ph please confirm
-        your email address.</p><br />
+      <p>Thank you for signing up! To start exploring the
+        {{appName}}
+        please confirm your email address.</p><br />
       <p><a class="face-btn" href="{{verificationLink}}" target="_blank">Verify
           your account</a></p><br />
       <p>
@@ -36,8 +37,10 @@
         >{{verificationLink}}</a><br />
         This verification link will expire in 24 hours.
       </p><br />
-      <p>If you did not create ctrl.ph account using this address, kindly
-        contact our support team at official.ctrl.ph@gmail.com.</p>
+      <p>If you did not create
+        {{appName}}
+        account using this address, kindly contact our support team at
+        {{appSupportEmail}}</p>
     </div>
   </body>
 </html>

@@ -79,7 +79,9 @@ const sendVerificationLink = (mailerEvent, body, verificationBase64) => {
       appName: appConfig.name,
       appSupportEmail: appConfig.supportEmail,
       fullName,
-      verificationLink: `${urlShortenerAppLink}/verify?q=${verificationBase64}`,
+      verificationLink: `${urlShortenerAppLink}/verify?q=${encodeURIComponent(
+        verificationBase64
+      )}`,
     }
   );
 };

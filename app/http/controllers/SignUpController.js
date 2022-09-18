@@ -2,6 +2,7 @@ const path = require("path");
 
 const ValidationException = require("../../exceptions/ValidationException");
 const HttpCode = require("../../helpers/HttpCode");
+const IPResolver = require("../../helpers/IPResolver");
 const Logger = require("../../helpers/Logger");
 const ResponseObject = require("../../helpers/ResponseObject");
 const Tokenize = require("../../helpers/Tokenize");
@@ -9,7 +10,7 @@ const Validation = require("../../helpers/Validation");
 const SignUpService = require("../../services/SignUpService");
 
 const signUp = async (req, res) => {
-  const { body, app } = req;
+  const { body, app, headers, ip } = req;
   const rules = SignUpService.rules;
 
   try {
@@ -36,19 +37,12 @@ const signUp = async (req, res) => {
       throw new Error("Unable to create user record");
     }
 
-    const csrfToken = Tokenize.makeAuthCSRF(Date.now(), newUser);
-    req.session.auth = {
-      user: newUser,
-      csrf: csrfToken,
-    };
-    req.session.save(function (err) {
-      if (err) {
-        throw new Error("Unable to save session");
-      }
-    });
+    const ipAddress = IPResolver.ipAddress(ip, headers);
+    const csrfToken = Tokenize.makeCSRF(ipAddress, headers);
+
     res.cookie("XSRF-TOKEN", csrfToken, {
       httpOnly: false,
-      maxAge: 1000 * 60 * 60, // 1 hour validity
+      maxAge: 1000 * 60 * 5, // 5 mins validity
     });
 
     SignUpService.sendVerificationLink(
@@ -57,8 +51,7 @@ const signUp = async (req, res) => {
       newUser.verification_base64
     );
 
-    delete newUser.verification_base64;
-    const responseObject = new ResponseObject(HttpCode.OK, 1, newUser);
+    const responseObject = new ResponseObject(HttpCode.OK, 1);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

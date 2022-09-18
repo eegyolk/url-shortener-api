@@ -1,5 +1,3 @@
-const moment = require("moment");
-
 const appConfig = require("../../config/app");
 const urlShortenerAppConfig = require("../../config/urlShortenerApp");
 const Password = require("../helpers/Password");
@@ -36,7 +34,6 @@ const createUser = async body => {
     full_name: fullName,
     email_address: emailAddress,
     password: Password.make(password),
-    logged_in_at: moment().format(),
   };
   const temp = Object.assign({}, data);
   delete temp.password;
@@ -45,23 +42,7 @@ const createUser = async body => {
   data["verification_token"] = token;
   data["verification_base64"] = base64;
 
-  const newUser = await Users.query().insert(data);
-
-  if (newUser) {
-    return {
-      id: newUser.id,
-      full_name: newUser.full_name,
-      email_address: newUser.email_address,
-      sso_provider: newUser.sso_provider || null,
-      image_url: newUser.image_url || "",
-      country: newUser.country || "",
-      verification_base64: newUser.verification_base64,
-      verified_at: newUser.verified_at || null,
-      logged_in_at: newUser.logged_in_at,
-    };
-  }
-
-  return;
+  return await Users.query().insert(data);
 };
 
 const sendVerificationLink = (mailerEvent, body, verificationBase64) => {

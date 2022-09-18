@@ -15,7 +15,8 @@ const getMe = async id => {
       "image_url",
       "country",
       "verified_at",
-      "logged_in_at"
+      "logged_in_at",
+      "reset_at"
     )
     .findById(id);
 };

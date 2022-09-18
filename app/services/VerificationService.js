@@ -18,11 +18,11 @@ const errors = {
   },
   2: {
     code: "ERR-SENDNEW-01",
-    message: "This email address does not exists",
+    message: "Email address does not exists",
   },
   3: {
     code: "ERR-SENDNEW-02",
-    message: "This email address is already verified",
+    message: "Email address is already verified",
   },
 };
 

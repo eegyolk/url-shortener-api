@@ -9,7 +9,8 @@ const rules = {
 
 const errors = {
   1: { code: "ERR-SIGNIN-01", message: "Invalid username or password" },
-  2: { code: "ERR-SIGNIN-02", message: "Account was deactivated" },
+  2: { code: "ERR-SIGNIN-02", message: "Email address is not yet verified" },
+  3: { code: "ERR-SIGNIN-03", message: "Account was deactivated" },
 };
 
 const getUserByEmailAddress = async emailAddress => {

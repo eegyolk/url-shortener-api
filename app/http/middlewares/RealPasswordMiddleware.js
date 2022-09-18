@@ -1,25 +1,20 @@
+const crypto = require("crypto-js");
 const path = require("path");
 
 const HttpCode = require("../../helpers/HttpCode");
 const Logger = require("../../helpers/Logger");
 const ResponseObject = require("../../helpers/ResponseObject");
 
-const checkAuth = function (req, res, next) {
+const resolve = function (req, res, next) {
+  const { body, headers } = req;
   try {
-    const { session } = req;
+    const password = body.password;
+    const csrf = headers["x-xsrf-token"];
+    const realPassword = crypto.AES.decrypt(password, csrf);
 
-    if (session.auth) {
-      next();
-    } else {
-      const responseObject = new ResponseObject(
-        HttpCode.FORBIDDEN,
-        0,
-        undefined,
-        1,
-        "No permission to access this resource"
-      );
-      res.status(responseObject.getHttpCode()).json(responseObject.getData());
-    }
+    req.body.password = realPassword.toString(crypto.enc.Utf8);
+
+    next();
   } catch (err) {
     const responseObject = new ResponseObject(
       HttpCode.INTERNAL_SERVER_ERROR,
@@ -34,7 +29,7 @@ const checkAuth = function (req, res, next) {
       Logger.LEVEL.ERROR,
       {
         err,
-        msg: `Error occurred in ${path.basename(__filename)}:checkAuth()`,
+        msg: `Error occurred in ${path.basename(__filename)}:resolve()`,
       },
       req.log
     );
@@ -42,5 +37,5 @@ const checkAuth = function (req, res, next) {
 };
 
 module.exports = {
-  checkAuth,
+  resolve,
 };

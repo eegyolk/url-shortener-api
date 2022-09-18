@@ -40,7 +40,7 @@ const checkCSRF = function (req, res, next) {
       Logger.LEVEL.ERROR,
       {
         err,
-        msg: `Error occurred in ${path.basename(__filename)}:getHistory()`,
+        msg: `Error occurred in ${path.basename(__filename)}:checkCSRF()`,
       },
       req.log
     );
@@ -78,7 +78,7 @@ const checkAuthCSRF = function (req, res, next) {
       Logger.LEVEL.ERROR,
       {
         err,
-        msg: `Error occurred in ${path.basename(__filename)}:getHistory()`,
+        msg: `Error occurred in ${path.basename(__filename)}:checkAuthCSRF()`,
       },
       req.log
     );

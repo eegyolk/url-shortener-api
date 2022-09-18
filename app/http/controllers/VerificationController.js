@@ -92,8 +92,7 @@ const sendNew = async (req, res) => {
     }
 
     const verificationToken = await VerificationService.regenVerificationToken(
-      result,
-      body.emailAddress
+      result
     );
     if (!verificationToken) {
       throw new Error("Unable to update user record");

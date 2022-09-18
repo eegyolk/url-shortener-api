@@ -77,7 +77,7 @@ const validateEmailAddress = async emailAddress => {
   return user[0];
 };
 
-const regenVerificationToken = async (user, emailAddress) => {
+const regenVerificationToken = async user => {
   const temp = Object.assign({}, user);
 
   if (temp.hasOwnProperty("id")) {
@@ -87,7 +87,7 @@ const regenVerificationToken = async (user, emailAddress) => {
     delete temp.verified_at;
   }
 
-  const { token, base64 } = Tokenize.makeVerificationToken(temp);
+  const { token, base64 } = Tokenize.makeLinkToken(temp);
 
   const patched = await Users.query()
     .patch({

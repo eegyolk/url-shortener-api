@@ -7,6 +7,7 @@ const RealPasswordMiddleware = require("../app/http/middlewares/RealPasswordMidd
 
 // Controllers
 const CSRFCookieController = require("../app/http/controllers/CSRFCookieController");
+const PasswordRecoveryController = require("../app/http/controllers/PasswordRecoveryController");
 const MeController = require("../app/http/controllers/MeController");
 const SignInController = require("../app/http/controllers/SignInController");
 const SignUpController = require("../app/http/controllers/SignUpController");
@@ -20,6 +21,11 @@ router.get("/", (req, res) => {
 
 router.get("/csrf-cookie", CSRFCookieController.getCSRFCookie);
 router.post("/sign-in", CSRFMiddleware.checkCSRF, SignInController.signIn);
+router.post(
+  "/forgot-password",
+  CSRFMiddleware.checkCSRF,
+  PasswordRecoveryController.forgotPassword
+);
 
 router.post(
   "/sign-up",

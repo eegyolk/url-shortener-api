@@ -50,7 +50,7 @@ const makeAuthCSRF = (timestamp, userData) => {
   return hash.toString(crypto.enc.Base64);
 };
 
-const makeVerificationToken = data => {
+const makeLinkToken = data => {
   const token = jwt.sign(data, appConfig.secretKey, {
     expiresIn: "1d",
   });
@@ -62,5 +62,5 @@ const makeVerificationToken = data => {
 module.exports = {
   makeCSRF,
   makeAuthCSRF,
-  makeVerificationToken,
+  makeLinkToken,
 };

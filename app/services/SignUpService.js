@@ -38,7 +38,7 @@ const createUser = async body => {
   const temp = Object.assign({}, data);
   delete temp.password;
 
-  const { token, base64 } = Tokenize.makeVerificationToken(temp);
+  const { token, base64 } = Tokenize.makeLinkToken(temp);
   data["verification_token"] = token;
   data["verification_base64"] = base64;
 

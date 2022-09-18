@@ -2,6 +2,7 @@ const path = require("path");
 
 const ValidationException = require("../../exceptions/ValidationException");
 const HttpCode = require("../../helpers/HttpCode");
+const IPResolver = require("../../helpers/IPResolver");
 const Logger = require("../../helpers/Logger");
 const ResponseObject = require("../../helpers/ResponseObject");
 const Tokenize = require("../../helpers/Tokenize");
@@ -9,7 +10,7 @@ const Validation = require("../../helpers/Validation");
 const VerificationService = require("../../services/VerificationService");
 
 const verify = async (req, res) => {
-  const { body } = req;
+  const { body, headers, ip } = req;
   const rules = VerificationService.rules.verify;
 
   try {
@@ -30,6 +31,14 @@ const verify = async (req, res) => {
       res.status(responseObject.getHttpCode()).json(responseObject.getData());
       return;
     }
+
+    const ipAddress = IPResolver.ipAddress(ip, headers);
+    const csrfToken = Tokenize.makeCSRF(ipAddress, headers);
+
+    res.cookie("XSRF-TOKEN", csrfToken, {
+      httpOnly: false,
+      maxAge: 1000 * 60 * 5, // 5 mins validity
+    });
 
     const responseObject = new ResponseObject(HttpCode.OK, 1, result);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
@@ -60,7 +69,7 @@ const verify = async (req, res) => {
 };
 
 const sendNew = async (req, res) => {
-  const { body, app } = req;
+  const { body, app, headers, ip } = req;
   const rules = VerificationService.rules.sendNew;
 
   try {
@@ -95,6 +104,14 @@ const sendNew = async (req, res) => {
       result,
       verificationToken
     );
+
+    const ipAddress = IPResolver.ipAddress(ip, headers);
+    const csrfToken = Tokenize.makeCSRF(ipAddress, headers);
+
+    res.cookie("XSRF-TOKEN", csrfToken, {
+      httpOnly: false,
+      maxAge: 1000 * 60 * 5, // 5 mins validity
+    });
 
     const responseObject = new ResponseObject(HttpCode.OK, 1);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());

@@ -89,7 +89,7 @@ const signIn = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1, updatedUser);
+    const responseObject = new ResponseObject(HttpCode.OK, 1);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

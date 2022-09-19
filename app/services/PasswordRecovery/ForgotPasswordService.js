@@ -95,7 +95,6 @@ const sendResetPasswordLink = (event, user, base64) => {
 
 module.exports = {
   rules,
-  errors,
   validateEmailAddress,
   createResetPasswordToken,
   sendResetPasswordLink,

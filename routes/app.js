@@ -29,7 +29,7 @@ router.post(
 );
 router.post(
   "/reset-password",
-  CSRFMiddleware.checkCSRF,
+  [CSRFMiddleware.checkCSRF, RealPasswordMiddleware.resolve],
   ResetPasswordController.resetPassword
 );
 

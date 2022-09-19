@@ -13,6 +13,9 @@ const resolve = function (req, res, next) {
     const realPassword = crypto.AES.decrypt(password, csrf);
 
     req.body.password = realPassword.toString(crypto.enc.Utf8);
+    if (body.hasOwnProperty("password_confirmation")) {
+      req.body.password_confirmation = realPassword.toString(crypto.enc.Utf8);
+    }
 
     next();
   } catch (err) {

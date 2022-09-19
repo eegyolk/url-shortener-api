@@ -1,13 +1,12 @@
+const jwt = require("jsonwebtoken");
 const moment = require("moment");
 
-const appConfig = require("../../config/app");
-const urlShortenerAppConfig = require("../../config/urlShortenerApp");
-const Tokenize = require("../helpers/Tokenize");
-const Users = require("../models/Users");
+const appConfig = require("../../../config/app");
+const urlShortenerAppConfig = require("../../../config/urlShortenerApp");
+const Tokenize = require("../../helpers/Tokenize");
+const Users = require("../../models/Users");
 
-const rules = {
-  forgotPassword: { emailAddress: "required|email" },
-};
+const rules = { emailAddress: "required|email" };
 
 const errors = {
   1: {
@@ -16,11 +15,15 @@ const errors = {
   },
   2: {
     code: "ERR-FORGOTPASSWORD-02",
-    message: "Email address is already verified",
+    message: "Email address is not yet verified",
   },
   3: {
     code: "ERR-FORGOTPASSWORD-03",
     message: "Account was deactivated",
+  },
+  4: {
+    code: "ERR-FORGOTPASSWORD-04",
+    message: "Unable to update user record",
   },
 };
 
@@ -41,7 +44,7 @@ const validateEmailAddress = async emailAddress => {
     return { error: errors[3] };
   }
 
-  return user[0];
+  return { user: user[0] };
 };
 
 const createResetPasswordToken = async user => {
@@ -67,13 +70,13 @@ const createResetPasswordToken = async user => {
     })
     .findById(user.id);
   if (!patched) {
-    return;
+    return { error: errors[4] };
   }
 
-  return base64;
+  return { base64 };
 };
 
-const sendResetPasswordLink = (mailerEvent, user, resetBase64) => {
+const sendResetPasswordLink = (event, user, base64) => {
   const fullName = user.full_name;
   const emailAddress = user.email_address;
 
@@ -81,19 +84,14 @@ const sendResetPasswordLink = (mailerEvent, user, resetBase64) => {
     urlShortenerAppConfig.domain
   }${urlShortenerAppConfig.port ? `:${urlShortenerAppConfig.port}` : ""}`;
 
-  mailerEvent.emit(
-    emailAddress,
-    `Hi ${fullName}, welcome to ${appConfig.name}, reset password instructions`,
-    "reset-password-link",
-    {
-      appName: appConfig.name,
-      appSupportEmail: appConfig.supportEmail,
-      fullName,
-      verificationLink: `${urlShortenerAppLink}/reset?q=${encodeURIComponent(
-        resetBase64
-      )}`,
-    }
-  );
+  event.emit(emailAddress, `Password Recovery`, "reset-password-link", {
+    appName: appConfig.name,
+    appSupportEmail: appConfig.supportEmail,
+    fullName,
+    verificationLink: `${urlShortenerAppLink}/reset?q=${encodeURIComponent(
+      base64
+    )}`,
+  });
 };
 
 module.exports = {

@@ -1,47 +1,48 @@
 const path = require("path");
 
-const ValidationException = require("../../exceptions/ValidationException");
-const HttpCode = require("../../helpers/HttpCode");
-const IPResolver = require("../../helpers/IPResolver");
-const Logger = require("../../helpers/Logger");
-const ResponseObject = require("../../helpers/ResponseObject");
-const Tokenize = require("../../helpers/Tokenize");
-const Validation = require("../../helpers/Validation");
-const PasswordRecoveryService = require("../../services/PasswordRecoveryService");
+const ValidationException = require("../../../exceptions/ValidationException");
+const HttpCode = require("../../../helpers/HttpCode");
+const IPResolver = require("../../../helpers/IPResolver");
+const Logger = require("../../../helpers/Logger");
+const ResponseObject = require("../../../helpers/ResponseObject");
+const Tokenize = require("../../../helpers/Tokenize");
+const Validation = require("../../../helpers/Validation");
+const ForgotPasswordService = require("../../../services/PasswordRecovery/ForgotPasswordService");
 
 const forgotPassword = async (req, res) => {
   const { body, app, headers, ip } = req;
-  const rules = PasswordRecoveryService.rules.forgotPassword;
+  const rules = ForgotPasswordService.rules;
 
   try {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    const result = await PasswordRecoveryService.validateEmailAddress(
-      body.emailAddress
-    );
-    if (result.hasOwnProperty("error")) {
+    const validateEmailAddressResult =
+      await ForgotPasswordService.validateEmailAddress(body.emailAddress);
+    if (validateEmailAddressResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
         HttpCode.OK,
         0,
         undefined,
-        result.error.code,
-        result.error.message
+        validateEmailAddressResult.error.code,
+        validateEmailAddressResult.error.message
       );
       res.status(responseObject.getHttpCode()).json(responseObject.getData());
       return;
     }
 
-    const resetPasswordToken =
-      await PasswordRecoveryService.createResetPasswordToken(result);
-    if (!resetPasswordToken) {
-      throw new Error("Unable to update user record");
+    const createResetPasswordTokenResult =
+      await ForgotPasswordService.createResetPasswordToken(
+        validateEmailAddressResult.user
+      );
+    if (createResetPasswordTokenResult.hasOwnProperty("error")) {
+      throw new Error(createResetPasswordTokenResult.error.message);
     }
 
-    PasswordRecoveryService.sendResetPasswordLink(
+    ForgotPasswordService.sendResetPasswordLink(
       app.locals.event.mailer,
-      result,
-      resetPasswordToken
+      validateEmailAddressResult.user,
+      createResetPasswordTokenResult.base64
     );
 
     const ipAddress = IPResolver.ipAddress(ip, headers);
@@ -73,7 +74,7 @@ const forgotPassword = async (req, res) => {
       Logger.LEVEL.ERROR,
       {
         err,
-        msg: `Error occurred in ${path.basename(__filename)}:sendNew()`,
+        msg: `Error occurred in ${path.basename(__filename)}:forgotPassword()`,
       },
       req.log
     );

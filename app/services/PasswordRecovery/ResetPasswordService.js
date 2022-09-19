@@ -57,6 +57,8 @@ const updatePassword = async (user, password) => {
   const patched = await Users.query()
     .patch({
       password: Password.make(password),
+      reset_token: "",
+      reset_base64: "",
       reset_at: moment().format(),
       updated_at: moment().format(),
     })

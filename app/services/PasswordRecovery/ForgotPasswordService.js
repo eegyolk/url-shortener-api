@@ -88,7 +88,7 @@ const sendResetPasswordLink = (event, user, base64) => {
     appName: appConfig.name,
     appSupportEmail: appConfig.supportEmail,
     fullName,
-    verificationLink: `${urlShortenerAppLink}/reset?q=${encodeURIComponent(
+    verificationLink: `${urlShortenerAppLink}/reset-password?q=${encodeURIComponent(
       base64
     )}`,
   });

@@ -51,6 +51,8 @@ const validateBase64 = async verificationBase64 => {
 
   await Users.query()
     .patch({
+      verification_token: "",
+      verification_base64: "",
       verified_at: moment().format(),
       updated_at: moment().format(),
     })

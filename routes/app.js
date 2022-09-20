@@ -7,12 +7,14 @@ const RealPasswordMiddleware = require("../app/http/middlewares/RealPasswordMidd
 
 // Controllers
 const CSRFCookieController = require("../app/http/controllers/CSRFCookieController");
+const SignInController = require("../app/http/controllers/SignInController");
+const MeController = require("../app/http/controllers/MeController");
+
+const SignUpController = require("../app/http/controllers/AccountRegistry/SignUpController");
+const VerificationController = require("../app/http/controllers/VerificationController");
+
 const ForgotPasswordController = require("../app/http/controllers/PasswordRecovery/ForgotPasswordController");
 const ResetPasswordController = require("../app/http/controllers/PasswordRecovery/ResetPasswordController");
-const MeController = require("../app/http/controllers/MeController");
-const SignInController = require("../app/http/controllers/SignInController");
-const SignUpController = require("../app/http/controllers/SignUpController");
-const VerificationController = require("../app/http/controllers/VerificationController");
 
 router = express.Router();
 
@@ -22,6 +24,26 @@ router.get("/", (req, res) => {
 
 router.get("/csrf-cookie", CSRFCookieController.getCSRFCookie);
 router.post("/sign-in", CSRFMiddleware.checkCSRF, SignInController.signIn);
+
+// Account Registry - Begin
+router.post(
+  "/sign-up",
+  [CSRFMiddleware.checkCSRF, RealPasswordMiddleware.resolve],
+  SignUpController.signUp
+);
+router.post(
+  "/verify-email",
+  CSRFMiddleware.checkCSRF,
+  VerificationController.verify
+);
+router.post(
+  "/send-verif-link",
+  CSRFMiddleware.checkCSRF,
+  VerificationController.sendNew
+);
+// Account Registry - End
+
+// Password Recovery - Begin
 router.post(
   "/forgot-password",
   CSRFMiddleware.checkCSRF,
@@ -32,18 +54,7 @@ router.post(
   [CSRFMiddleware.checkCSRF, RealPasswordMiddleware.resolve],
   ResetPasswordController.resetPassword
 );
-
-router.post(
-  "/sign-up",
-  [CSRFMiddleware.checkCSRF, RealPasswordMiddleware.resolve],
-  SignUpController.signUp
-);
-router.post("/verify", CSRFMiddleware.checkCSRF, VerificationController.verify);
-router.post(
-  "/send-verif-link",
-  CSRFMiddleware.checkCSRF,
-  VerificationController.sendNew
-);
+// Password Recovery - End
 
 router.get(
   "/me",

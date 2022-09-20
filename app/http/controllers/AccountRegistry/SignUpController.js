@@ -1,13 +1,14 @@
 const path = require("path");
 
-const ValidationException = require("../../exceptions/ValidationException");
-const HttpCode = require("../../helpers/HttpCode");
-const IPResolver = require("../../helpers/IPResolver");
-const Logger = require("../../helpers/Logger");
-const ResponseObject = require("../../helpers/ResponseObject");
-const Tokenize = require("../../helpers/Tokenize");
-const Validation = require("../../helpers/Validation");
-const SignUpService = require("../../services/SignUpService");
+const DefaultException = require("../../../exceptions/DefaultException");
+const ValidationException = require("../../../exceptions/ValidationException");
+const HttpCode = require("../../../helpers/HttpCode");
+const IPResolver = require("../../../helpers/IPResolver");
+const Logger = require("../../../helpers/Logger");
+const ResponseObject = require("../../../helpers/ResponseObject");
+const Tokenize = require("../../../helpers/Tokenize");
+const Validation = require("../../../helpers/Validation");
+const SignUpService = require("../../../services/AccountRegistry/SignUpService");
 
 const signUp = async (req, res) => {
   const { body, app, headers, ip } = req;
@@ -17,24 +18,27 @@ const signUp = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    const isEmailAddressExists = await SignUpService.isEmailAddressExists(
+    const validateEmailAddressResult = await SignUpService.validateEmailAddress(
       body.emailAddress
     );
-    if (isEmailAddressExists) {
+    if (validateEmailAddressResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
         HttpCode.OK,
         0,
         undefined,
-        SignUpService.errors[1].code,
-        SignUpService.errors[1].message
+        validateEmailAddressResult.error.code,
+        validateEmailAddressResult.error.message
       );
       res.status(responseObject.getHttpCode()).json(responseObject.getData());
       return;
     }
 
-    const newUser = await SignUpService.createUser(body);
-    if (!newUser) {
-      throw new Error("Unable to create user record");
+    const createUserResult = await SignUpService.createUser(body);
+    if (createUserResult.hasOwnProperty("error")) {
+      throw new DefaultException(
+        createUserResult.error.message,
+        HttpCode.INTERNAL_SERVER_ERROR
+      );
     }
 
     const ipAddress = IPResolver.ipAddress(ip, headers);
@@ -48,7 +52,7 @@ const signUp = async (req, res) => {
     SignUpService.sendVerificationLink(
       app.locals.event.mailer,
       body,
-      newUser.verification_base64
+      createUserResult.user.verification_base64
     );
 
     const responseObject = new ResponseObject(HttpCode.OK, 1);
@@ -58,13 +62,17 @@ const signUp = async (req, res) => {
       res.status(err.getStatus()).json(err.getErrors());
       return;
     }
+    if (err instanceof DefaultException) {
+      res.status(err.getStatus()).json(err.getErrors());
+      return;
+    }
 
     const responseObject = new ResponseObject(
       HttpCode.INTERNAL_SERVER_ERROR,
       0,
       undefined,
       1,
-      err.message
+      "Something went wrong while the server process the request."
     );
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
 

@@ -1,6 +1,5 @@
 const path = require("path");
 
-const DefaultException = require("../../../exceptions/DefaultException");
 const ValidationException = require("../../../exceptions/ValidationException");
 const HttpCode = require("../../../helpers/HttpCode");
 const IPResolver = require("../../../helpers/IPResolver");
@@ -35,10 +34,15 @@ const signUp = async (req, res) => {
 
     const createUserResult = await SignUpService.createUser(body);
     if (createUserResult.hasOwnProperty("error")) {
-      throw new DefaultException(
-        createUserResult.error.message,
-        HttpCode.INTERNAL_SERVER_ERROR
+      const responseObject = new ResponseObject(
+        HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        createUserResult.error.code,
+        createUserResult.error.message
       );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
     }
 
     const ipAddress = IPResolver.ipAddress(ip, headers);
@@ -59,10 +63,6 @@ const signUp = async (req, res) => {
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {
-      res.status(err.getStatus()).json(err.getErrors());
-      return;
-    }
-    if (err instanceof DefaultException) {
       res.status(err.getStatus()).json(err.getErrors());
       return;
     }

@@ -38,7 +38,7 @@ const resetPassword = async (req, res) => {
     );
     if (updatePasswordResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        HttpCode.OK,
+        HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
         updatePasswordResult.error.code,
@@ -69,7 +69,7 @@ const resetPassword = async (req, res) => {
       0,
       undefined,
       1,
-      err.message
+      "Something went wrong while the server process the request."
     );
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
 

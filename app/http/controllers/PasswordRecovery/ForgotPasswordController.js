@@ -36,7 +36,15 @@ const forgotPassword = async (req, res) => {
         validateEmailAddressResult.user
       );
     if (createResetPasswordTokenResult.hasOwnProperty("error")) {
-      throw new Error(createResetPasswordTokenResult.error.message);
+      const responseObject = new ResponseObject(
+        HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        createResetPasswordTokenResult.error.code,
+        createResetPasswordTokenResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
     }
 
     ForgotPasswordService.sendResetPasswordLink(
@@ -66,7 +74,7 @@ const forgotPassword = async (req, res) => {
       0,
       undefined,
       1,
-      err.message
+      "Something went wrong while the server process the request."
     );
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
 

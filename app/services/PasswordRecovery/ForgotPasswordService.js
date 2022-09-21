@@ -10,19 +10,19 @@ const rules = { emailAddress: "required|email" };
 const errors = {
   1: {
     code: "ERR-FORGOTPASSWORD-01",
-    message: "Email address does not exists",
+    message: "Email address does not exists.",
   },
   2: {
     code: "ERR-FORGOTPASSWORD-02",
-    message: "Email address is not yet verified",
+    message: "Email address is not yet verified.",
   },
   3: {
     code: "ERR-FORGOTPASSWORD-03",
-    message: "Account was deactivated",
+    message: "Account was deactivated.",
   },
   4: {
     code: "ERR-FORGOTPASSWORD-04",
-    message: "Unable to update user record",
+    message: "Unable to update user record.",
   },
 };
 

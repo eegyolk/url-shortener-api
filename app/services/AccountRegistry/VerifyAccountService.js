@@ -14,11 +14,11 @@ const errors = {
   },
   2: {
     code: "ERR-VERIFYACCOUNT-02",
-    message: "Looks like the verification link has expired",
+    message: "Looks like the verification link has expired.",
   },
   3: {
     code: "ERR-VERIFYACCOUNT-03",
-    message: "Unable to update user record",
+    message: "Unable to update user record.",
   },
 };
 

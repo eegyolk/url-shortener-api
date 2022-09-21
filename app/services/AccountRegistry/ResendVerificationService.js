@@ -1,4 +1,3 @@
-const jwt = require("jsonwebtoken");
 const moment = require("moment");
 
 const appConfig = require("../../../config/app");
@@ -13,15 +12,15 @@ const rules = {
 const errors = {
   1: {
     code: "ERR-RESENDVERIFICATION-01",
-    message: "Email address does not exists",
+    message: "Email address does not exists.",
   },
   2: {
     code: "ERR-RESENDVERIFICATION-02",
-    message: "Email address is already verified",
+    message: "Email address is already verified.",
   },
   3: {
     code: "ERR-RESENDVERIFICATION-03",
-    message: "Unable to update user record",
+    message: "Unable to update user record.",
   },
 };
 

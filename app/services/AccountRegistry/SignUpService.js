@@ -12,8 +12,8 @@ const rules = {
 };
 
 const errors = {
-  1: { code: "ERR-SIGNUP-01", message: "Email address already exists" },
-  2: { code: "ERR-SIGNUP-02", message: "Unable to create user record" },
+  1: { code: "ERR-SIGNUP-01", message: "Email address already exists." },
+  2: { code: "ERR-SIGNUP-02", message: "Unable to create user record." },
 };
 
 const validateEmailAddress = async emailAddress => {

@@ -1,8 +1,6 @@
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
 
-const appConfig = require("../../../config/app");
-const urlShortenerAppConfig = require("../../../config/urlShortenerApp");
 const Password = require("../../helpers/Password");
 const Users = require("../../models/Users");
 
@@ -19,11 +17,11 @@ const errors = {
   },
   2: {
     code: "ERR-RESETPASSWORD-02",
-    message: "Looks like the reset link has expired",
+    message: "Looks like the reset link has expired.",
   },
   3: {
     code: "ERR-RESETPASSWORD-03",
-    message: "Unable to update user record",
+    message: "Unable to update user record.",
   },
 };
 

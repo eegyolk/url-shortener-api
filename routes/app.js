@@ -7,8 +7,9 @@ const RealPasswordMiddleware = require("../app/http/middlewares/RealPasswordMidd
 
 // Controllers
 const CSRFCookieController = require("../app/http/controllers/CSRFCookieController");
-const SignInController = require("../app/http/controllers/SignInController");
-const MeController = require("../app/http/controllers/MeController");
+
+const SignInController = require("../app/http/controllers/Authentication/SignInController");
+const MeController = require("../app/http/controllers/Authentication/MeController");
 
 const SignUpController = require("../app/http/controllers/AccountRegistry/SignUpController");
 const VerifyAccountController = require("../app/http/controllers/AccountRegistry/VerifyAccountController");
@@ -22,9 +23,16 @@ router = express.Router();
 router.get("/", (req, res) => {
   res.send("For app component only");
 });
-
 router.get("/csrf-cookie", CSRFCookieController.getCSRFCookie);
+
+// Authentication - Begin
 router.post("/sign-in", CSRFMiddleware.checkCSRF, SignInController.signIn);
+router.get(
+  "/me",
+  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
+  MeController.getMe
+);
+// Authentication - End
 
 // Account Registry - Begin
 router.post(
@@ -56,11 +64,5 @@ router.post(
   ResetPasswordController.resetPassword
 );
 // Password Recovery - End
-
-router.get(
-  "/me",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  MeController.getMe
-);
 
 module.exports = router;

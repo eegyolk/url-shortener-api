@@ -1,10 +1,10 @@
 const path = require("path");
 
-const HttpCode = require("../../helpers/HttpCode");
-const Logger = require("../../helpers/Logger");
-const ResponseObject = require("../../helpers/ResponseObject");
-const Tokenize = require("../../helpers/Tokenize");
-const MeService = require("../../services/MeService");
+const HttpCode = require("../../../helpers/HttpCode");
+const Logger = require("../../../helpers/Logger");
+const ResponseObject = require("../../../helpers/ResponseObject");
+const Tokenize = require("../../../helpers/Tokenize");
+const MeService = require("../../../services/Authentication/MeService");
 
 const getMe = async (req, res) => {
   const { session } = req;

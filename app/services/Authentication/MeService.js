@@ -1,4 +1,4 @@
-const Users = require("../models/Users");
+const Users = require("../../models/Users");
 
 const errors = {
   1: { code: "ERR-ME-01", message: "Account not yet verified" },

@@ -1,12 +1,12 @@
 const path = require("path");
 
-const ValidationException = require("../../exceptions/ValidationException");
-const HttpCode = require("../../helpers/HttpCode");
-const Logger = require("../../helpers/Logger");
-const ResponseObject = require("../../helpers/ResponseObject");
-const Tokenize = require("../../helpers/Tokenize");
-const Validation = require("../../helpers/Validation");
-const SignInService = require("../../services/SignInService");
+const ValidationException = require("../../../exceptions/ValidationException");
+const HttpCode = require("../../../helpers/HttpCode");
+const Logger = require("../../../helpers/Logger");
+const ResponseObject = require("../../../helpers/ResponseObject");
+const Tokenize = require("../../../helpers/Tokenize");
+const Validation = require("../../../helpers/Validation");
+const SignInService = require("../../../services/Authentication/SignInService");
 
 const signIn = async (req, res) => {
   const { body } = req;
@@ -16,67 +16,58 @@ const signIn = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    const user = await SignInService.getUserByEmailAddress(body.emailAddress);
-    if (!user) {
-      const responseObject = new ResponseObject(
-        HttpCode.OK,
-        0,
-        undefined,
-        SignInService.errors[1].code,
-        SignInService.errors[1].message
-      );
-      res.status(responseObject.getHttpCode()).json(responseObject.getData());
-      return;
-    }
+    const getUserByEmailAddressResult =
+      await SignInService.getUserByEmailAddress(body.emailAddress);
 
-    const isValid = SignInService.validatePassword(
+    const validatePasswordResult = SignInService.validatePassword(
       body.password,
-      user.password
+      getUserByEmailAddressResult.hasOwnProperty("user")
+        ? getUserByEmailAddressResult.user.password
+        : "password"
     );
-    if (!isValid) {
+
+    if (validatePasswordResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
         HttpCode.OK,
         0,
         undefined,
-        SignInService.errors[1].code,
-        SignInService.errors[1].message
+        validatePasswordResult.error.code,
+        validatePasswordResult.error.message
       );
       res.status(responseObject.getHttpCode()).json(responseObject.getData());
       return;
     }
 
-    if (!user.verified_at) {
+    if (getUserByEmailAddressResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
         HttpCode.OK,
         0,
         undefined,
-        SignInService.errors[2].code,
-        SignInService.errors[2].message
+        getUserByEmailAddressResult.error.code,
+        getUserByEmailAddressResult.error.message
       );
       res.status(responseObject.getHttpCode()).json(responseObject.getData());
       return;
     }
 
-    if (user.deleted_at) {
+    const updatedUserResult = await SignInService.updateUser(
+      getUserByEmailAddressResult.user.id
+    );
+    if (updatedUserResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        HttpCode.OK,
+        HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
-        SignInService.errors[3].code,
-        SignInService.errors[3].message
+        updatedUserResult.error.code,
+        updatedUserResult.error.message
       );
       res.status(responseObject.getHttpCode()).json(responseObject.getData());
       return;
     }
 
-    const updatedUser = await SignInService.updateUser(user.id);
-    if (!updatedUser) {
-      throw new Error("Unable to update user record");
-    }
-
-    const csrfToken = Tokenize.makeAuthCSRF(Date.now(), updatedUser);
+    const csrfToken = Tokenize.makeAuthCSRF(Date.now(), updatedUserResult);
     req.session.auth = {
-      user: updatedUser,
+      user: updatedUserResult,
       csrf: csrfToken,
     };
     req.session.save(function (err) {

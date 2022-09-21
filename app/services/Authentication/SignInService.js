@@ -16,7 +16,7 @@ const errors = {
 
 const getUserByEmailAddress = async emailAddress => {
   const user = await Users.query()
-    .select("id", "password", "verified_at", "deleted_at")
+    .select("id", "password", "session_id", "verified_at", "deleted_at")
     .where("email_address", emailAddress);
 
   if (user.length === 0) {
@@ -43,9 +43,25 @@ const validatePassword = (password, passwordHash) => {
   return {};
 };
 
-const updateUser = async id => {
+const clearLastSession = sessionId => {
+  return new Promise(resolve => {
+    if (sessionId) {
+      G_SESSION_STORE.destroy(sessionId, async err => {
+        if (err) {
+          resolve({ error: err });
+        } else {
+          resolve({});
+        }
+      });
+    }
+    resolve({});
+  });
+};
+
+const updateUser = async (id, sessionId) => {
   const patched = await Users.query()
     .patch({
+      session_id: sessionId,
       logged_in_at: moment().format(),
       updated_at: moment().format(),
     })
@@ -75,5 +91,6 @@ module.exports = {
   rules,
   getUserByEmailAddress,
   validatePassword,
+  clearLastSession,
   updateUser,
 };

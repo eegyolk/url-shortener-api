@@ -50,8 +50,24 @@ const signIn = async (req, res) => {
       return;
     }
 
+    const clearLastSessionResult = await SignInService.clearLastSession(
+      getUserByEmailAddressResult.user.session_id
+    );
+    if (clearLastSessionResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        clearLastSessionResult.error.code,
+        clearLastSessionResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
+
     const updatedUserResult = await SignInService.updateUser(
-      getUserByEmailAddressResult.user.id
+      getUserByEmailAddressResult.user.id,
+      req.session.id
     );
     if (updatedUserResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(

@@ -23,9 +23,9 @@ const getMe = async (req, res) => {
       return;
     }
 
-    const csrfToken = Tokenize.makeAuthCSRF(Date.now(), user);
+    const csrfToken = Tokenize.makeAuthCSRF(Date.now(), getMeResult);
     req.session.auth = {
-      user: user,
+      user: getMeResult,
       csrf: csrfToken,
     };
     req.session.save();
@@ -34,7 +34,7 @@ const getMe = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1, user);
+    const responseObject = new ResponseObject(HttpCode.OK, 1, getMeResult);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     const responseObject = new ResponseObject(

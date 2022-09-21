@@ -51,26 +51,21 @@ const createUser = async body => {
   return { user };
 };
 
-const sendVerificationLink = (mailerEvent, body, verificationBase64) => {
+const sendVerificationLink = (event, body, verificationBase64) => {
   const { fullName, emailAddress } = body;
 
   const urlShortenerAppLink = `${urlShortenerAppConfig.protocol}://${
     urlShortenerAppConfig.domain
   }${urlShortenerAppConfig.port ? `:${urlShortenerAppConfig.port}` : ""}`;
 
-  mailerEvent.emit(
-    emailAddress,
-    `Activate Account`,
-    "sign-up-verification-link",
-    {
-      appName: appConfig.name,
-      appSupportEmail: appConfig.supportEmail,
-      fullName,
-      verificationLink: `${urlShortenerAppLink}/verify-account?q=${encodeURIComponent(
-        verificationBase64
-      )}`,
-    }
-  );
+  event.emit(emailAddress, "Activate Account", "sign-up-verification-link", {
+    appName: appConfig.name,
+    appSupportEmail: appConfig.supportEmail,
+    fullName,
+    verificationLink: `${urlShortenerAppLink}/verify-account?q=${encodeURIComponent(
+      verificationBase64
+    )}`,
+  });
 };
 
 module.exports = {

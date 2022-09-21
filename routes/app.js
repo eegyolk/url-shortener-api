@@ -12,7 +12,7 @@ const MeController = require("../app/http/controllers/MeController");
 
 const SignUpController = require("../app/http/controllers/AccountRegistry/SignUpController");
 const VerifyAccountController = require("../app/http/controllers/AccountRegistry/VerifyAccountController");
-const VerificationController = require("../app/http/controllers/VerificationController");
+const ResendVerificationController = require("../app/http/controllers/AccountRegistry/ResendVerificationController");
 
 const ForgotPasswordController = require("../app/http/controllers/PasswordRecovery/ForgotPasswordController");
 const ResetPasswordController = require("../app/http/controllers/PasswordRecovery/ResetPasswordController");
@@ -38,9 +38,9 @@ router.post(
   VerifyAccountController.verifyAccount
 );
 router.post(
-  "/send-verif-link",
+  "/resend-verification",
   CSRFMiddleware.checkCSRF,
-  VerificationController.sendNew
+  ResendVerificationController.resendVerification
 );
 // Account Registry - End
 

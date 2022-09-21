@@ -70,11 +70,7 @@ const signIn = async (req, res) => {
       user: updatedUserResult,
       csrf: csrfToken,
     };
-    req.session.save(function (err) {
-      if (err) {
-        throw new Error("Unable to save session");
-      }
-    });
+    req.session.save();
     res.cookie("XSRF-TOKEN", csrfToken, {
       httpOnly: false,
       maxAge: 1000 * 60 * 60, // 1 hour validity
@@ -93,7 +89,7 @@ const signIn = async (req, res) => {
       0,
       undefined,
       1,
-      err.message
+      "Something went wrong while the server process the request."
     );
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
 

@@ -64,7 +64,9 @@ const updateUser = async id => {
       "image_url",
       "country",
       "verified_at",
-      "logged_in_at"
+      "logged_in_at",
+      "reset_at",
+      "deleted_at"
     )
     .findById(id);
 };

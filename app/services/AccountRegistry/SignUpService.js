@@ -60,13 +60,13 @@ const sendVerificationLink = (mailerEvent, body, verificationBase64) => {
 
   mailerEvent.emit(
     emailAddress,
-    `Hi ${fullName}, welcome to ${appConfig.name}`,
+    `Activate Account`,
     "sign-up-verification-link",
     {
       appName: appConfig.name,
       appSupportEmail: appConfig.supportEmail,
       fullName,
-      verificationLink: `${urlShortenerAppLink}/verify-email?q=${encodeURIComponent(
+      verificationLink: `${urlShortenerAppLink}/verify-account?q=${encodeURIComponent(
         verificationBase64
       )}`,
     }

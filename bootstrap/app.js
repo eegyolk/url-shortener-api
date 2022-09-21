@@ -27,8 +27,8 @@ module.exports.extendApp = ({ app }) => {
   // initialize event
   const mailerEvent = new MailerEvent();
   mailerEvent.init();
-  // attach event in app
-  app.locals.event = {
+  // make events accessible globally
+  global.G_EVENTS = {
     mailer: mailerEvent,
   };
 
@@ -38,9 +38,10 @@ module.exports.extendApp = ({ app }) => {
     sessionConfig.cookie.secure = true; // serve secure cookies
     sessionConfig.proxy = true; // trust first proxy
   }
-  app.use(
-    session({ store: new FileStore(sessionFileStoreConfig), ...sessionConfig })
-  );
+  const fileStore = new FileStore(sessionFileStoreConfig);
+  app.use(session({ store: fileStore, ...sessionConfig }));
+  // make session store accessible globally
+  global.G_SESSION_STORE = fileStore;
 
   // application middleware for logging
   app.use((req, res, next) => {

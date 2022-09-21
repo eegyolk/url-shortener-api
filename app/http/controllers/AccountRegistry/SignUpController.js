@@ -10,7 +10,7 @@ const Validation = require("../../../helpers/Validation");
 const SignUpService = require("../../../services/AccountRegistry/SignUpService");
 
 const signUp = async (req, res) => {
-  const { body, app, headers, ip } = req;
+  const { body, headers, ip } = req;
   const rules = SignUpService.rules;
 
   try {
@@ -54,7 +54,7 @@ const signUp = async (req, res) => {
     });
 
     SignUpService.sendVerificationLink(
-      app.locals.event.mailer,
+      G_EVENTS.mailer,
       body,
       createUserResult.user.verification_base64
     );

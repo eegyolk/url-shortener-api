@@ -10,7 +10,7 @@ const Validation = require("../../../helpers/Validation");
 const ResendVerificationService = require("../../../services/AccountRegistry/ResendVerificationService");
 
 const resendVerification = async (req, res) => {
-  const { body, app, headers, ip } = req;
+  const { body, headers, ip } = req;
   const rules = ResendVerificationService.rules;
 
   try {
@@ -48,7 +48,7 @@ const resendVerification = async (req, res) => {
     }
 
     ResendVerificationService.sendVerificationLink(
-      app.locals.event.mailer,
+      G_EVENTS.mailer,
       validateEmailAddressResult.user,
       regenVerificationTokenResult.verificationBase64
     );

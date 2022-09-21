@@ -10,7 +10,7 @@ const Validation = require("../../../helpers/Validation");
 const ForgotPasswordService = require("../../../services/PasswordRecovery/ForgotPasswordService");
 
 const forgotPassword = async (req, res) => {
-  const { body, app, headers, ip } = req;
+  const { body, headers, ip } = req;
   const rules = ForgotPasswordService.rules;
 
   try {
@@ -48,7 +48,7 @@ const forgotPassword = async (req, res) => {
     }
 
     ForgotPasswordService.sendResetPasswordLink(
-      app.locals.event.mailer,
+      G_EVENTS.mailer,
       validateEmailAddressResult.user,
       createResetPasswordTokenResult.base64
     );

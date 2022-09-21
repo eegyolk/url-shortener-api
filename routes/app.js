@@ -11,6 +11,7 @@ const SignInController = require("../app/http/controllers/SignInController");
 const MeController = require("../app/http/controllers/MeController");
 
 const SignUpController = require("../app/http/controllers/AccountRegistry/SignUpController");
+const VerifyAccountController = require("../app/http/controllers/AccountRegistry/VerifyAccountController");
 const VerificationController = require("../app/http/controllers/VerificationController");
 
 const ForgotPasswordController = require("../app/http/controllers/PasswordRecovery/ForgotPasswordController");
@@ -32,9 +33,9 @@ router.post(
   SignUpController.signUp
 );
 router.post(
-  "/verify-email",
+  "/verify-account",
   CSRFMiddleware.checkCSRF,
-  VerificationController.verify
+  VerifyAccountController.verifyAccount
 );
 router.post(
   "/send-verif-link",

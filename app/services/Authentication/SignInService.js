@@ -81,8 +81,7 @@ const updateUser = async (id, sessionId) => {
       "country",
       "verified_at",
       "logged_in_at",
-      "reset_at",
-      "deleted_at"
+      "reset_at"
     )
     .findById(id);
 };

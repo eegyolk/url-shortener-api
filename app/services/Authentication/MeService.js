@@ -17,8 +17,7 @@ const getMe = async id => {
       "country",
       "verified_at",
       "logged_in_at",
-      "reset_at",
-      "deleted_at"
+      "reset_at"
     )
     .findById(id);
 

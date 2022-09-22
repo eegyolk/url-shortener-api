@@ -13,7 +13,9 @@ const getMe = async (req, res) => {
     const getMeResult = await MeService.getMe(session.auth.user.id);
     if (getMeResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        HttpCode.OK,
+        getMeResult.error.code === "ERR-ME-01"
+          ? HttpCode.INTERNAL_SERVER_ERROR
+          : HttpCode.OK,
         0,
         undefined,
         getMeResult.error.code,

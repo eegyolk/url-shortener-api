@@ -10,6 +10,7 @@ const CSRFCookieController = require("../app/http/controllers/CSRFCookieControll
 
 const SignInController = require("../app/http/controllers/Authentication/SignInController");
 const MeController = require("../app/http/controllers/Authentication/MeController");
+const SignOutController = require("../app/http/controllers/Authentication/SignOutController");
 
 const SignUpController = require("../app/http/controllers/AccountRegistry/SignUpController");
 const VerifyAccountController = require("../app/http/controllers/AccountRegistry/VerifyAccountController");
@@ -31,6 +32,11 @@ router.get(
   "/me",
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
   MeController.getMe
+);
+router.post(
+  "/sign-out",
+  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
+  SignOutController.signOut
 );
 // Authentication - End
 

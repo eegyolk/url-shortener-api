@@ -58,8 +58,8 @@ const signIn = async (req, res) => {
         HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
-        clearLastSessionResult.error.code,
-        clearLastSessionResult.error.message
+        1,
+        JSON.stringify(clearLastSessionResult.error)
       );
       res.status(responseObject.getHttpCode()).json(responseObject.getData());
       return;

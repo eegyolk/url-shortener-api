@@ -32,16 +32,17 @@ const verifyAccount = async (req, res) => {
       return;
     }
 
-    const clearTokenResult = await VerifyAccountService.clearToken(
-      validateBase64Result.user.id
-    );
-    if (clearTokenResult.hasOwnProperty("error")) {
+    const clearTokenAndCreateDefaultWorkspaceResult =
+      await VerifyAccountService.clearTokenAndCreateDefaultWorkspace(
+        validateBase64Result.user.id
+      );
+    if (clearTokenAndCreateDefaultWorkspaceResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
         HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
-        clearTokenResult.error.code,
-        clearTokenResult.error.message
+        clearTokenAndCreateDefaultWorkspaceResult.error.code,
+        clearTokenAndCreateDefaultWorkspaceResult.error.message
       );
       res.status(responseObject.getHttpCode()).json(responseObject.getData());
       return;

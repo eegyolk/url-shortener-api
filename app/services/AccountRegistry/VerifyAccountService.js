@@ -1,7 +1,10 @@
 const jwt = require("jsonwebtoken");
+const { transaction } = require("objection");
 const moment = require("moment");
 
 const Users = require("../../models/Users");
+const Workspaces = require("../../models/Workspaces");
+const WorkspaceMembers = require("../../models/WorkspaceMembers");
 
 const rules = {
   verificationBase64: "required",
@@ -19,6 +22,14 @@ const errors = {
   3: {
     code: "ERR-VERIFYACCOUNT-03",
     message: "Unable to update user record.",
+  },
+  4: {
+    code: "ERR-VERIFYACCOUNT-04",
+    message: "Unable to update workspace record.",
+  },
+  5: {
+    code: "ERR-VERIFYACCOUNT-05",
+    message: "Unable to update workspace member record.",
   },
 };
 
@@ -47,18 +58,47 @@ const validateBase64 = async verificationBase64 => {
   return { user: user[0] };
 };
 
-const clearToken = async id => {
-  const patched = await Users.query()
-    .patch({
-      verification_token: "",
-      verification_base64: "",
-      verified_at: moment().format(),
-      updated_at: moment().format(),
-    })
-    .findById(id);
-  if (!patched) {
-    return { error: errors[3] };
-  }
+const clearTokenAndCreateDefaultWorkspace = async id => {
+  await transaction(
+    Users,
+    Workspaces,
+    WorkspaceMembers,
+    async (Users, Workspaces, WorkspaceMembers) => {
+      const user = await Users.query()
+        .patch({
+          verification_token: "",
+          verification_base64: "",
+          verified_at: moment().format(),
+          updated_at: moment().format(),
+        })
+        .findById(id);
+      if (!user) {
+        return { error: errors[3] };
+      }
+
+      const workspace = await Workspaces.query().insert({
+        owner_user_id: id,
+        creator_user_id: id,
+        name: "Default",
+        space_character: Workspaces.SPACE_CHARACTER.BLANK_SPACE,
+        description: "My default workspace",
+      });
+      if (!workspace) {
+        return { error: errors[4] };
+      }
+
+      const workspaceMember = await WorkspaceMembers.query().insert({
+        workspace_id: workspace.id,
+        owner_user_id: id,
+        creator_user_id: id,
+        user_id: id,
+        role: WorkspaceMembers.ROLES.OWNER,
+      });
+      if (!workspaceMember) {
+        return { error: errors[5] };
+      }
+    }
+  );
 
   return {};
 };
@@ -66,5 +106,5 @@ const clearToken = async id => {
 module.exports = {
   rules,
   validateBase64,
-  clearToken,
+  clearTokenAndCreateDefaultWorkspace,
 };

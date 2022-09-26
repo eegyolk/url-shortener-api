@@ -45,6 +45,12 @@ const signUp = async (req, res) => {
       return;
     }
 
+    SignUpService.sendVerificationLink(
+      G_EVENTS.mailer,
+      body,
+      createUserResult.user.verification_base64
+    );
+
     const ipAddress = IPResolver.ipAddress(ip, headers);
     const csrfToken = Tokenize.makeCSRF(ipAddress, headers);
 
@@ -52,12 +58,6 @@ const signUp = async (req, res) => {
       httpOnly: false,
       maxAge: 1000 * 60 * 5, // 5 mins validity
     });
-
-    SignUpService.sendVerificationLink(
-      G_EVENTS.mailer,
-      body,
-      createUserResult.user.verification_base64
-    );
 
     const responseObject = new ResponseObject(HttpCode.OK, 1);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());

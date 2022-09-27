@@ -21,15 +21,15 @@ const errors = {
   },
   3: {
     code: "ERR-VERIFYACCOUNT-03",
-    message: "Unable to update user record.",
+    message: "Unable to update workspace record.",
   },
   4: {
     code: "ERR-VERIFYACCOUNT-04",
-    message: "Unable to update workspace record.",
+    message: "Unable to update workspace member record.",
   },
   5: {
     code: "ERR-VERIFYACCOUNT-05",
-    message: "Unable to update workspace member record.",
+    message: "Unable to update user record.",
   },
 };
 
@@ -60,22 +60,10 @@ const validateBase64 = async verificationBase64 => {
 
 const clearTokenAndCreateDefaultWorkspace = async id => {
   await transaction(
-    Users,
     Workspaces,
     WorkspaceMembers,
-    async (Users, Workspaces, WorkspaceMembers) => {
-      const user = await Users.query()
-        .patch({
-          verification_token: "",
-          verification_base64: "",
-          verified_at: moment().format(),
-          updated_at: moment().format(),
-        })
-        .findById(id);
-      if (!user) {
-        return { error: errors[3] };
-      }
-
+    Users,
+    async (Workspaces, WorkspaceMembers, Users) => {
       const workspace = await Workspaces.query().insert({
         owner_user_id: id,
         creator_user_id: id,
@@ -84,7 +72,7 @@ const clearTokenAndCreateDefaultWorkspace = async id => {
         description: "My default workspace",
       });
       if (!workspace) {
-        return { error: errors[4] };
+        return { error: errors[3] };
       }
 
       const workspaceMember = await WorkspaceMembers.query().insert({
@@ -95,6 +83,19 @@ const clearTokenAndCreateDefaultWorkspace = async id => {
         role: WorkspaceMembers.ROLES.OWNER,
       });
       if (!workspaceMember) {
+        return { error: errors[4] };
+      }
+
+      const user = await Users.query()
+        .patch({
+          verification_token: "",
+          verification_base64: "",
+          verified_at: moment().format(),
+          primary_workspace_id: workspace.id,
+          updated_at: moment().format(),
+        })
+        .findById(id);
+      if (!user) {
         return { error: errors[5] };
       }
     }

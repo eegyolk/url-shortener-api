@@ -17,8 +17,9 @@ const getMe = async id => {
       "country",
       "verified_at",
       "logged_in_at",
-      "deleted_at",
-      "reset_at"
+      "reset_at",
+      "primary_workspace_id",
+      "deleted_at"
     )
     .findById(id);
 

@@ -6,10 +6,10 @@ class WorkspaceMembers extends Model {
   }
 
   static ROLES = {
-    OWNER: "Owner",
-    ADMIN: "Admin",
-    EDITOR: "Editor",
-    VIEWER: "Viewer",
+    OWNER: "Owner", // the owner of workspace
+    ADMIN: "Admin", // can create/read/edit/delete
+    EDITOR: "Editor", // can read/edit
+    VIEWER: "Viewer", // can read only
   };
 }
 

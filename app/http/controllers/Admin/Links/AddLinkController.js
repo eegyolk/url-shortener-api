@@ -4,7 +4,7 @@ const ValidationException = require("../../../../exceptions/ValidationException"
 const HttpCode = require("../../../../helpers/HttpCode");
 const Logger = require("../../../../helpers/Logger");
 const ResponseObject = require("../../../../helpers/ResponseObject");
-const Tokenize = require("../../../helpers/Tokenize");
+const Tokenize = require("../../../../helpers/Tokenize");
 const Validation = require("../../../../helpers/Validation");
 const AddLinkService = require("../../../../services/Admin/Links/AddLinkService");
 

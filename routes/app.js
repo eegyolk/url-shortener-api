@@ -145,7 +145,7 @@ router.get(
 router.get(
   "/links/filter",
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  SearchAndFilterLinkController.filterDomain
+  SearchAndFilterLinkController.filterLink
 );
 // Links Related Routes - End
 

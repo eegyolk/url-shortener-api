@@ -36,6 +36,7 @@ const DeleteLinkController = require("../app/http/controllers/Admin/Links/Delete
 const EditLinkController = require("../app/http/controllers/Admin/Links/EditLinkController");
 const FetchLinkController = require("../app/http/controllers/Admin/Links/FetchLinkController");
 const SearchAndFilterLinkController = require("../app/http/controllers/Admin/Links/SearchAndFilterLinkController");
+const UtilityLinkController = require("../app/http/controllers/Admin/Links/UtilityLinkController");
 
 const AddTagController = require("../app/http/controllers/Admin/Tags/AddTagController");
 const DeleteTagController = require("../app/http/controllers/Admin/Tags/DeleteTagController");
@@ -120,6 +121,16 @@ router.post(
 // Password Recovery - End
 
 // Links Related Routes - Begin
+router.get(
+  "/links/resolve",
+  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
+  UtilityLinkController.resolve
+);
+router.get(
+  "/links/suggest",
+  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
+  UtilityLinkController.suggest
+);
 router.post(
   "/links",
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],

@@ -12,6 +12,31 @@ class Workspaces extends Model {
     HYPEN: "Hypen",
     UNDERSCORE: "Underscore",
   };
+
+  static get relationMappings() {
+    const WorkspaceMembers = require("./WorkspaceMembers");
+    const WorkspaceTemplates = require("./WorkspaceTemplates");
+
+    return {
+      members: {
+        relation: Model.HasManyRelation,
+        modelClass: WorkspaceMembers,
+        join: {
+          from: `${this.tableName}.id`,
+          to: `${WorkspaceMembers.tableName}.workspace_id`,
+        },
+      },
+
+      templates: {
+        relation: Model.HasManyRelation,
+        modelClass: WorkspaceTemplates,
+        join: {
+          from: `${this.tableName}.id`,
+          to: `${WorkspaceTemplates.tableName}.workspace_id`,
+        },
+      },
+    };
+  }
 }
 
 module.exports = Workspaces;

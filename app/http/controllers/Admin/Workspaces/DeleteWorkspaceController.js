@@ -16,7 +16,22 @@ const deleteWorkspace = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const deleteWorkspaceResult = await DeleteWorkspaceService.deleteWorkspace(
+      body
+    );
+    if (deleteWorkspaceResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-DELETEWORKSPACE-01"].includes(deleteWorkspaceResult.error.code)
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        deleteWorkspaceResult.error.code,
+        deleteWorkspaceResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {

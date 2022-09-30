@@ -1,5 +1,3 @@
-const moment = require("moment");
-
 const UTMParameters = require("../../../models/UTMParameters");
 const UTMParameterValues = require("../../../models/UTMParameterValues");
 const Workspaces = require("../../../models/Workspaces");

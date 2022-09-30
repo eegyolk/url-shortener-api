@@ -15,7 +15,6 @@ class Workspaces extends Model {
 
   static get relationMappings() {
     const WorkspaceMembers = require("./WorkspaceMembers");
-    const WorkspaceTemplates = require("./WorkspaceTemplates");
 
     return {
       members: {
@@ -24,15 +23,6 @@ class Workspaces extends Model {
         join: {
           from: `${this.tableName}.id`,
           to: `${WorkspaceMembers.tableName}.workspace_id`,
-        },
-      },
-
-      templates: {
-        relation: Model.HasManyRelation,
-        modelClass: WorkspaceTemplates,
-        join: {
-          from: `${this.tableName}.id`,
-          to: `${WorkspaceTemplates.tableName}.workspace_id`,
         },
       },
     };

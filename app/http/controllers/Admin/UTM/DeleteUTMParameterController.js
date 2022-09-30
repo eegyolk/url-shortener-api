@@ -16,7 +16,23 @@ const deleteUTMParameter = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const deleteUTMParameterResult =
+      await DeleteUTMParameterService.deleteUTMParameter(body);
+    if (deleteUTMParameterResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-DELETEUTMPARAMETERVALUE-01"].includes(
+          deleteUTMParameterResult.error.code
+        )
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        deleteUTMParameterResult.error.code,
+        deleteUTMParameterResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {

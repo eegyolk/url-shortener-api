@@ -16,7 +16,23 @@ const deleteUTMTemplate = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const deleteUTMTemplateResult =
+      await DeleteUTMTemplateService.deleteUTMTemplate(body);
+    if (deleteUTMTemplateResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-DELETEUTMPARAMETERTEMPLATE-01"].includes(
+          deleteUTMTemplateResult.error.code
+        )
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        deleteUTMTemplateResult.error.code,
+        deleteUTMTemplateResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {

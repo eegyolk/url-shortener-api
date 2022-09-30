@@ -16,7 +16,22 @@ const addDomain = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const addDomainResult = await AddDomainService.addDomain(body);
+    if (addDomainResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-ADDDOMAIN-01", "ERR-ADDDOMAIN-02"].includes(
+          addDomainResult.error.code
+        )
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        addDomainResult.error.code,
+        addDomainResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {
@@ -33,7 +48,7 @@ const addDomain = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1);
+    const responseObject = new ResponseObject(HttpCode.OK, 1, addDomainResult);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

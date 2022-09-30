@@ -16,7 +16,20 @@ const deleteTag = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const deleteTagResult = await DeleteTagService.deleteTag(body);
+    if (deleteTagResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-DELETETAG-01"].includes(deleteTagResult.error.code)
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        deleteTagResult.error.code,
+        deleteTagResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {

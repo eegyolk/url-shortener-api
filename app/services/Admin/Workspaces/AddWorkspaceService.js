@@ -1,5 +1,3 @@
-const moment = require("moment");
-
 const Users = require("../../../models/Users");
 const Workspaces = require("../../../models/Workspaces");
 
@@ -7,7 +5,8 @@ const rules = {
   ownerUserId: "required|integer",
   creatorUserId: "required|integer",
   name: "required|string",
-  spaceCharacter: "present|string",
+  spaceCharacter:
+    "present|in:'Blank Space','Nothing','Plus','Hypen','Underscore'",
   description: "present|string",
 };
 

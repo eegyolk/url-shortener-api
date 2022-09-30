@@ -16,7 +16,22 @@ const addMember = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const addMemberResult = await AddMemberService.addMember(body);
+    if (addMemberResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-ADDMEMBER-01", "ERR-ADDMEMBER-02", "ERR-ADDMEMBER-02"].includes(
+          addMemberResult.error.code
+        )
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        addMemberResult.error.code,
+        addMemberResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {
@@ -33,7 +48,7 @@ const addMember = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1);
+    const responseObject = new ResponseObject(HttpCode.OK, 1, addMemberResult);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

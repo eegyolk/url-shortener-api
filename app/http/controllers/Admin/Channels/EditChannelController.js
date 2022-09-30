@@ -19,7 +19,9 @@ const editChannel = async (req, res) => {
     const editChannelResult = await EditChannelService.editChannel(body);
     if (editChannelResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-EDITCHANNEL-01"].includes(editChannelResult.error.code)
+        ["ERR-EDITCHANNEL-01", "ERR-EDITCHANNEL-02"].includes(
+          editChannelResult.error.code
+        )
           ? HttpCode.OK
           : HttpCode.INTERNAL_SERVER_ERROR,
         0,

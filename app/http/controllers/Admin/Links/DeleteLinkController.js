@@ -46,7 +46,7 @@ const deleteLink = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1);
+    const responseObject = new ResponseObject(HttpCode.OK, 1, deleteLinkResult);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

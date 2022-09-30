@@ -16,7 +16,20 @@ const deleteChannel = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const deleteChannelResult = await DeleteChannelService.deleteChannel(body);
+    if (deleteChannelResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-DELETECHANNEL-01"].includes(deleteChannelResult.error.code)
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        deleteChannelResult.error.code,
+        deleteChannelResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {

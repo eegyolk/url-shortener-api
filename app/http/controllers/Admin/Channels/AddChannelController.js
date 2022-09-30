@@ -16,7 +16,22 @@ const addChannel = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const addChannelResult = await AddChannelService.addChannel(body);
+    if (addChannelResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-ADDCHANNEL-01", "ERR-ADDCHANNEL-02"].includes(
+          addChannelResult.error.code
+        )
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        addChannelResult.error.code,
+        addChannelResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {
@@ -33,7 +48,7 @@ const addChannel = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1);
+    const responseObject = new ResponseObject(HttpCode.OK, 1, addChannelResult);
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

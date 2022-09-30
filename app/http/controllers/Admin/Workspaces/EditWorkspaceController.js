@@ -16,7 +16,20 @@ const editWorkspace = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const editWorkspaceResult = await EditWorkspaceService.editWorkspace(body);
+    if (editWorkspaceResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-EDITWORKSPACE-01"].includes(editWorkspaceResult.error.code)
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        editWorkspaceResult.error.code,
+        editWorkspaceResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {
@@ -33,7 +46,11 @@ const editWorkspace = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1);
+    const responseObject = new ResponseObject(
+      HttpCode.OK,
+      1,
+      editWorkspaceResult
+    );
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

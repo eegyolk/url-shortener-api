@@ -16,7 +16,23 @@ const editUTMParameter = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const editUTMParameterResult =
+      await EditUTMParameterService.editUTMParameter(body);
+    if (editUTMParameterResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-EDITUTMPARAMETERVALUE-01"].includes(
+          editUTMParameterResult.error.code
+        )
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        editUTMParameterResult.error.code,
+        editUTMParameterResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {
@@ -33,7 +49,11 @@ const editUTMParameter = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1);
+    const responseObject = new ResponseObject(
+      HttpCode.OK,
+      1,
+      editUTMParameterResult
+    );
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

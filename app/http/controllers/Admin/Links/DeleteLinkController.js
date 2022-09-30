@@ -16,7 +16,20 @@ const deleteLink = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const deleteLinkResult = await DeleteLinkService.deleteLink(body);
+    if (deleteLinkResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-DELETELINK-01"].includes(deleteLinkResult.error.code)
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        deleteLinkResult.error.code,
+        deleteLinkResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {

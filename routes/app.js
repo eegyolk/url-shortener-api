@@ -23,50 +23,42 @@ const AddChannelController = require("../app/http/controllers/Admin/Channels/Add
 const DeleteChannelController = require("../app/http/controllers/Admin/Channels/DeleteChannelController");
 const EditChannelController = require("../app/http/controllers/Admin/Channels/EditChannelController");
 const FetchChannelController = require("../app/http/controllers/Admin/Channels/FetchChannelController");
-const SearchAndFilterChannelController = require("../app/http/controllers/Admin/Channels/SearchAndFilterChannelController");
 
 const AddDomainController = require("../app/http/controllers/Admin/Domains/AddDomainController");
 const DeleteDomainController = require("../app/http/controllers/Admin/Domains/DeleteDomainController");
 const EditDomainController = require("../app/http/controllers/Admin/Domains/EditDomainController");
 const FetchDomainController = require("../app/http/controllers/Admin/Domains/FetchDomainController");
-const SearchAndFilterDomainController = require("../app/http/controllers/Admin/Domains/SearchAndFilterDomainController");
 
 const AddLinkController = require("../app/http/controllers/Admin/Links/AddLinkController");
 const DeleteLinkController = require("../app/http/controllers/Admin/Links/DeleteLinkController");
 const EditLinkController = require("../app/http/controllers/Admin/Links/EditLinkController");
 const FetchLinkController = require("../app/http/controllers/Admin/Links/FetchLinkController");
-const SearchAndFilterLinkController = require("../app/http/controllers/Admin/Links/SearchAndFilterLinkController");
 const UtilityLinkController = require("../app/http/controllers/Admin/Links/UtilityLinkController");
 
 const AddTagController = require("../app/http/controllers/Admin/Tags/AddTagController");
 const DeleteTagController = require("../app/http/controllers/Admin/Tags/DeleteTagController");
 const EditTagController = require("../app/http/controllers/Admin/Tags/EditTagController");
 const FetchTagController = require("../app/http/controllers/Admin/Tags/FetchTagController");
-const SearchAndFilterTagController = require("../app/http/controllers/Admin/Tags/SearchAndFilterTagController");
 
 const AddUTMParameterController = require("../app/http/controllers/Admin/UTM/AddUTMParameterController");
 const DeleteUTMParameterController = require("../app/http/controllers/Admin/UTM/DeleteUTMParameterController");
 const EditUTMParameterController = require("../app/http/controllers/Admin/UTM/EditUTMParameterController");
 const FetchUTMParameterController = require("../app/http/controllers/Admin/UTM/FetchUTMParameterController");
-const SearchAndFilterUTMParameterController = require("../app/http/controllers/Admin/UTM/SearchAndFilterUTMParameterController");
 
 const AddUTMTemplateController = require("../app/http/controllers/Admin/UTM/AddUTMTemplateController");
 const DeleteUTMTemplateController = require("../app/http/controllers/Admin/UTM/DeleteUTMTemplateController");
 const EditUTMTemplateController = require("../app/http/controllers/Admin/UTM/EditUTMTemplateController");
 const FetchUTMTemplateController = require("../app/http/controllers/Admin/UTM/FetchUTMTemplateController");
-const SearchAndFilterUTMTemplateController = require("../app/http/controllers/Admin/UTM/SearchAndFilterUTMTemplateController");
 
 const AddMemberController = require("../app/http/controllers/Admin/Workspaces/AddMemberController");
 const DeleteMemberController = require("../app/http/controllers/Admin/Workspaces/DeleteMemberController");
 const EditMemberController = require("../app/http/controllers/Admin/Workspaces/EditMemberController");
 const FetchMemberController = require("../app/http/controllers/Admin/Workspaces/FetchMemberController");
-const SearchAndFilterMemberController = require("../app/http/controllers/Admin/Workspaces/SearchAndFilterMemberController");
 
 const AddWorkspaceController = require("../app/http/controllers/Admin/Workspaces/AddWorkspaceController");
 const DeleteWorkspaceController = require("../app/http/controllers/Admin/Workspaces/DeleteWorkspaceController");
 const EditWorkspaceController = require("../app/http/controllers/Admin/Workspaces/EditWorkspaceController");
 const FetchWorkspaceController = require("../app/http/controllers/Admin/Workspaces/FetchWorkspaceController");
-const SearchAndFilterWorkspaceController = require("../app/http/controllers/Admin/Workspaces/SearchAndFilterWorkspaceController");
 
 router = express.Router();
 

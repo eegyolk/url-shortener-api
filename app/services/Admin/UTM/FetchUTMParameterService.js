@@ -7,6 +7,9 @@ const rules = {};
 
 const errors = {};
 
+const fetchUTMParameter = async body => {};
+
 module.exports = {
   rules,
+  fetchUTMParameter,
 };

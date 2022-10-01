@@ -8,6 +8,9 @@ const rules = {};
 
 const errors = {};
 
+const fetchUTMTemplate = async body => {};
+
 module.exports = {
   rules,
+  fetchUTMTemplate,
 };

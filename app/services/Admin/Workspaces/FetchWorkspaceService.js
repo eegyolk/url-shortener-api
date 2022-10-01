@@ -6,6 +6,9 @@ const rules = {};
 
 const errors = {};
 
+const fetchWorkspace = async body => {};
+
 module.exports = {
   rules,
+  fetchWorkspace,
 };

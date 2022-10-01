@@ -6,6 +6,9 @@ const rules = {};
 
 const errors = {};
 
+const fetchDomain = async body => {};
+
 module.exports = {
   rules,
+  fetchDomain,
 };

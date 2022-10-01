@@ -6,6 +6,9 @@ const rules = {};
 
 const errors = {};
 
+const fetchTag = async body => {};
+
 module.exports = {
   rules,
+  fetchTag,
 };

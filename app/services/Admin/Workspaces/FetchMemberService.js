@@ -7,6 +7,9 @@ const rules = {};
 
 const errors = {};
 
+const fetchMember = async body => {};
+
 module.exports = {
   rules,
+  fetchMember,
 };

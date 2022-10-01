@@ -6,6 +6,9 @@ const rules = {};
 
 const errors = {};
 
+const fetchChannel = async body => {};
+
 module.exports = {
   rules,
+  fetchChannel,
 };

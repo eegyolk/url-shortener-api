@@ -16,7 +16,22 @@ const fetchWorkspace = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const fetchWorkspaceResult = await FetchWorkspaceService.fetchWorkspace(
+      body
+    );
+    if (fetchWorkspaceResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-FETCHWORKSPACE-01"].includes(fetchWorkspaceResult.error.code)
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        fetchWorkspaceResult.error.code,
+        fetchWorkspaceResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {
@@ -33,7 +48,11 @@ const fetchWorkspace = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1);
+    const responseObject = new ResponseObject(
+      HttpCode.OK,
+      1,
+      fetchWorkspaceResult
+    );
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

@@ -16,7 +16,23 @@ const fetchUTMTemplate = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const fetchUTMTemplateResult =
+      await FetchUTMTemplateService.fetchUTMTemplate(body);
+    if (fetchUTMTemplateResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-FETCHUTMPARAMETERTEMPLATE-01"].includes(
+          fetchUTMTemplateResult.error.code
+        )
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        fetchUTMTemplateResult.error.code,
+        fetchUTMTemplateResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {
@@ -33,7 +49,11 @@ const fetchUTMTemplate = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1);
+    const responseObject = new ResponseObject(
+      HttpCode.OK,
+      1,
+      fetchUTMTemplateResult
+    );
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

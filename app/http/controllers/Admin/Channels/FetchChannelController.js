@@ -16,7 +16,20 @@ const fetchChannel = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const fetchChannelResult = await FetchChannelService.fetchChannel(body);
+    if (fetchChannelResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-FETCHCHANNEL-01"].includes(fetchChannelResult.error.code)
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        fetchChannelResult.error.code,
+        fetchChannelResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {
@@ -33,7 +46,11 @@ const fetchChannel = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1);
+    const responseObject = new ResponseObject(
+      HttpCode.OK,
+      1,
+      fetchChannelResult
+    );
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

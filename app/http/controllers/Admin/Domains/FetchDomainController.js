@@ -16,7 +16,20 @@ const fetchDomain = async (req, res) => {
     const validation = new Validation(body, rules);
     validation.validate();
 
-    // TODO: logic here...
+    const fetchDomainResult = await FetchDomainService.fetchDomain(body);
+    if (fetchDomainResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        ["ERR-FETCHDOMAIN-01"].includes(fetchDomainResult.error.code)
+          ? HttpCode.OK
+          : HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        fetchDomainResult.error.code,
+        fetchDomainResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
     const csrfToken = Tokenize.makeAuthCSRF(Date.now(), session.auth.user);
     req.session.auth = {
@@ -33,7 +46,11 @@ const fetchDomain = async (req, res) => {
       maxAge: 1000 * 60 * 60, // 1 hour validity
     });
 
-    const responseObject = new ResponseObject(HttpCode.OK, 1);
+    const responseObject = new ResponseObject(
+      HttpCode.OK,
+      1,
+      fetchDomainResult
+    );
     res.status(responseObject.getHttpCode()).json(responseObject.getData());
   } catch (err) {
     if (err instanceof ValidationException) {

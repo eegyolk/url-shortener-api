@@ -9,19 +9,56 @@ const Validation = require("../../../../helpers/Validation");
 const FetchChannelService = require("../../../../services/Admin/Channels/FetchChannelService");
 
 const fetchChannel = async (req, res) => {
-  const { body, session } = req;
-  const rules = FetchChannelService.rules;
+  const { params, query, session } = req;
 
   try {
-    const validation = new Validation(body, rules);
-    validation.validate();
+    const getTypeResult = FetchChannelService.getType(params.value);
+    if (getTypeResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        getTypeResult.error.code,
+        getTypeResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
-    const fetchChannelResult = await FetchChannelService.fetchChannel(body);
+    let fetchChannelResult = {};
+    if (FetchChannelService.types.ALL === getTypeResult.type) {
+      const validation = new Validation(query, FetchChannelService.rules.all);
+      validation.validate();
+
+      fetchChannelResult = await FetchChannelService.all(query);
+    } else if (FetchChannelService.types.SINGLE === getTypeResult.type) {
+      const validation = new Validation(
+        query,
+        FetchChannelService.rules.single
+      );
+      validation.validate();
+
+      fetchChannelResult = await FetchChannelService.single(query);
+    } else if (FetchChannelService.types.SEARCH === getTypeResult.type) {
+      const validation = new Validation(
+        query,
+        FetchChannelService.rules.search
+      );
+      validation.validate();
+
+      fetchChannelResult = await FetchChannelService.search(query);
+    } else if (FetchChannelService.types.FILTER === getTypeResult.type) {
+      const validation = new Validation(
+        query,
+        FetchChannelService.rules.filter
+      );
+      validation.validate();
+
+      fetchChannelResult = await FetchChannelService.filter(query);
+    }
     if (fetchChannelResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-FETCHCHANNEL-01"].includes(fetchChannelResult.error.code)
-          ? HttpCode.OK
-          : HttpCode.INTERNAL_SERVER_ERROR,
+        HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
         fetchChannelResult.error.code,

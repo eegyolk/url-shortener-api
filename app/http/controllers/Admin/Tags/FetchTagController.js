@@ -9,19 +9,47 @@ const Validation = require("../../../../helpers/Validation");
 const FetchTagService = require("../../../../services/Admin/Tags/FetchTagService");
 
 const fetchTag = async (req, res) => {
-  const { body, session } = req;
-  const rules = FetchTagService.rules;
+  const { params, query, session } = req;
 
   try {
-    const validation = new Validation(body, rules);
-    validation.validate();
+    const getTypeResult = FetchTagService.getType(params.value);
+    if (getTypeResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        getTypeResult.error.code,
+        getTypeResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
-    const fetchTagResult = await FetchTagService.fetchTag(body);
+    let fetchTagResult = {};
+    if (FetchTagService.types.ALL === getTypeResult.type) {
+      const validation = new Validation(query, FetchTagService.rules.all);
+      validation.validate();
+
+      fetchTagResult = await FetchTagService.all(query);
+    } else if (FetchTagService.types.SINGLE === getTypeResult.type) {
+      const validation = new Validation(query, FetchTagService.rules.single);
+      validation.validate();
+
+      fetchTagResult = await FetchTagService.single(query);
+    } else if (FetchTagService.types.SEARCH === getTypeResult.type) {
+      const validation = new Validation(query, FetchTagService.rules.search);
+      validation.validate();
+
+      fetchTagResult = await FetchTagService.search(query);
+    } else if (FetchTagService.types.FILTER === getTypeResult.type) {
+      const validation = new Validation(query, FetchTagService.rules.filter);
+      validation.validate();
+
+      fetchTagResult = await FetchTagService.filter(query);
+    }
     if (fetchTagResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-FETCHTAG-01"].includes(fetchTagResult.error.code)
-          ? HttpCode.OK
-          : HttpCode.INTERNAL_SERVER_ERROR,
+        HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
         fetchTagResult.error.code,

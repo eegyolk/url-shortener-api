@@ -144,17 +144,7 @@ router.get(
   FetchLinkController.fetchLink
 );
 router.get(
-  "/links/:id",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchLinkController.fetchLink
-);
-router.get(
-  "/links/:search",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchLinkController.fetchLink
-);
-router.get(
-  "/links/:filter",
+  "/links/:value", // <id>, "search", "filter"
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
   FetchLinkController.fetchLink
 );
@@ -182,17 +172,7 @@ router.get(
   FetchDomainController.fetchDomain
 );
 router.get(
-  "/domains/:id",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchDomainController.fetchDomain
-);
-router.get(
-  "/domains/:search",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchDomainController.fetchDomain
-);
-router.get(
-  "/domains/:filter",
+  "/domains/:value", // <id>, "search", "filter"
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
   FetchDomainController.fetchDomain
 );
@@ -220,20 +200,11 @@ router.get(
   FetchTagController.fetchTag
 );
 router.get(
-  "/tags/:id",
+  "/tags/:value", // <id>, "search", "filter"
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
   FetchTagController.fetchTag
 );
-router.get(
-  "/tags/:search",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchTagController.fetchTag
-);
-router.get(
-  "/tags/:filter",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchTagController.fetchTag
-);
+
 // Tags Related Routes - End
 
 // Channels Related Routes - Begin
@@ -258,17 +229,7 @@ router.get(
   FetchChannelController.fetchChannel
 );
 router.get(
-  "/channels/:id",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchChannelController.fetchChannel
-);
-router.get(
-  "/channels/:search",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchChannelController.fetchChannel
-);
-router.get(
-  "/channels/:filter",
+  "/channels/:value", // <id>, "search", "filter"
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
   FetchChannelController.fetchChannel
 );
@@ -296,17 +257,7 @@ router.get(
   FetchUTMTemplateController.fetchUTMTemplate
 );
 router.get(
-  "/utm-templates/:id",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchUTMTemplateController.fetchUTMTemplate
-);
-router.get(
-  "/utm-templates/:search",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchUTMTemplateController.fetchUTMTemplate
-);
-router.get(
-  "/utm-templates/:filter",
+  "/utm-templates/:value", // <id>, "search", "filter"
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
   FetchUTMTemplateController.fetchUTMTemplate
 );
@@ -334,17 +285,7 @@ router.get(
   FetchUTMParameterController.fetchUTMParameter
 );
 router.get(
-  "/utm-parameters/:id",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchUTMParameterController.fetchUTMParameter
-);
-router.get(
-  "/utm-parameters/:search",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchUTMParameterController.fetchUTMParameter
-);
-router.get(
-  "/utm-parameters/:filter",
+  "/utm-parameters/:value", // <id>, "search", "filter"
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
   FetchUTMParameterController.fetchUTMParameter
 );
@@ -372,17 +313,7 @@ router.get(
   FetchWorkspaceController.fetchWorkspace
 );
 router.get(
-  "/workspaces/:id",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchWorkspaceController.fetchWorkspace
-);
-router.get(
-  "/workspaces/:search",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchWorkspaceController.fetchWorkspace
-);
-router.get(
-  "/workspaces/:filter",
+  "/workspaces/:value", // <id>, "search", "filter"
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
   FetchWorkspaceController.fetchWorkspace
 );
@@ -410,17 +341,7 @@ router.get(
   FetchMemberController.fetchMember
 );
 router.get(
-  "/workspace-members/:id",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchMemberController.fetchMember
-);
-router.get(
-  "/workspace-members/:search",
-  [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
-  FetchMemberController.fetchMember
-);
-router.get(
-  "/workspworkspace-membersaces/:filter",
+  "/workspace-members/:value", // <id>, "search", "filter"
   [AuthMiddleware.checkAuth, CSRFMiddleware.checkAuthCSRF],
   FetchMemberController.fetchMember
 );

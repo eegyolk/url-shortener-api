@@ -9,19 +9,47 @@ const Validation = require("../../../../helpers/Validation");
 const FetchDomainService = require("../../../../services/Admin/Domains/FetchDomainService");
 
 const fetchDomain = async (req, res) => {
-  const { body, session } = req;
-  const rules = FetchDomainService.rules;
+  const { params, query, session } = req;
 
   try {
-    const validation = new Validation(body, rules);
-    validation.validate();
+    const getTypeResult = FetchDomainService.getType(params.value);
+    if (getTypeResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        getTypeResult.error.code,
+        getTypeResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
-    const fetchDomainResult = await FetchDomainService.fetchDomain(body);
+    let fetchDomainResult = {};
+    if (FetchDomainService.types.ALL === getTypeResult.type) {
+      const validation = new Validation(query, FetchDomainService.rules.all);
+      validation.validate();
+
+      fetchDomainResult = await FetchDomainService.all(query);
+    } else if (FetchDomainService.types.SINGLE === getTypeResult.type) {
+      const validation = new Validation(query, FetchDomainService.rules.single);
+      validation.validate();
+
+      fetchDomainResult = await FetchDomainService.single(query);
+    } else if (FetchDomainService.types.SEARCH === getTypeResult.type) {
+      const validation = new Validation(query, FetchDomainService.rules.search);
+      validation.validate();
+
+      fetchDomainResult = await FetchDomainService.search(query);
+    } else if (FetchDomainService.types.FILTER === getTypeResult.type) {
+      const validation = new Validation(query, FetchDomainService.rules.filter);
+      validation.validate();
+
+      fetchDomainResult = await FetchDomainService.filter(query);
+    }
     if (fetchDomainResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-FETCHDOMAIN-01"].includes(fetchDomainResult.error.code)
-          ? HttpCode.OK
-          : HttpCode.INTERNAL_SERVER_ERROR,
+        HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
         fetchDomainResult.error.code,

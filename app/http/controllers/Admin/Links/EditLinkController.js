@@ -19,7 +19,9 @@ const editLink = async (req, res) => {
     const editLinkResult = await EditLinkService.editLink(body);
     if (editLinkResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-EDITLINK-01"].includes(editLinkResult.error.code)
+        ["ERR-EDITLINK-01", "ERR-EDITLINK-02"].includes(
+          editLinkResult.error.code
+        )
           ? HttpCode.OK
           : HttpCode.INTERNAL_SERVER_ERROR,
         0,

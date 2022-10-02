@@ -9,19 +9,47 @@ const Validation = require("../../../../helpers/Validation");
 const FetchMemberService = require("../../../../services/Admin/Workspaces/FetchMemberService");
 
 const fetchMember = async (req, res) => {
-  const { body, session } = req;
-  const rules = FetchMemberService.rules;
+  const { params, query, session } = req;
 
   try {
-    const validation = new Validation(body, rules);
-    validation.validate();
-
-    const fetchMemberResult = await FetchMemberService.fetchMember(body);
-    if (fetchTagResult.hasOwnProperty("error")) {
+    const getTypeResult = FetchMemberService.getType(params.value);
+    if (getTypeResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-FETCHMEMBER-01"].includes(fetchMemberResult.error.code)
-          ? HttpCode.OK
-          : HttpCode.INTERNAL_SERVER_ERROR,
+        HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        getTypeResult.error.code,
+        getTypeResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
+
+    let fetchMemberResult = {};
+    if (FetchMemberService.types.ALL === getTypeResult.type) {
+      const validation = new Validation(query, FetchMemberService.rules.all);
+      validation.validate();
+
+      fetchMemberResult = await FetchMemberService.all(query);
+    } else if (FetchMemberService.types.SINGLE === getTypeResult.type) {
+      const validation = new Validation(query, FetchMemberService.rules.single);
+      validation.validate();
+
+      fetchMemberResult = await FetchMemberService.single(query);
+    } else if (FetchMemberService.types.SEARCH === getTypeResult.type) {
+      const validation = new Validation(query, FetchMemberService.rules.search);
+      validation.validate();
+
+      fetchMemberResult = await FetchMemberService.search(query);
+    } else if (FetchMemberService.types.FILTER === getTypeResult.type) {
+      const validation = new Validation(query, FetchMemberService.rules.filter);
+      validation.validate();
+
+      fetchMemberResult = await FetchMemberService.filter(query);
+    }
+    if (fetchMemberResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
         fetchMemberResult.error.code,

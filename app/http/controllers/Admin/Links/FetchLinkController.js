@@ -9,19 +9,47 @@ const Validation = require("../../../../helpers/Validation");
 const FetchLinkService = require("../../../../services/Admin/Links/FetchLinkService");
 
 const fetchLink = async (req, res) => {
-  const { body, session } = req;
-  const rules = FetchLinkService.rules;
+  const { params, query, session } = req;
 
   try {
-    const validation = new Validation(body, rules);
-    validation.validate();
+    const getTypeResult = FetchLinkService.getType(params.value);
+    if (getTypeResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        getTypeResult.error.code,
+        getTypeResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
-    const fetchLinkResult = await FetchLinkService.fetchLink(body);
+    let fetchLinkResult = {};
+    if (FetchLinkService.types.ALL === getTypeResult.type) {
+      const validation = new Validation(query, FetchLinkService.rules.all);
+      validation.validate();
+
+      fetchLinkResult = await FetchLinkService.all(query);
+    } else if (FetchLinkService.types.SINGLE === getTypeResult.type) {
+      const validation = new Validation(query, FetchLinkService.rules.single);
+      validation.validate();
+
+      fetchLinkResult = await FetchLinkService.single(query);
+    } else if (FetchLinkService.types.SEARCH === getTypeResult.type) {
+      const validation = new Validation(query, FetchLinkService.rules.search);
+      validation.validate();
+
+      fetchLinkResult = await FetchLinkService.search(query);
+    } else if (FetchLinkService.types.FILTER === getTypeResult.type) {
+      const validation = new Validation(query, FetchLinkService.rules.filter);
+      validation.validate();
+
+      fetchLinkResult = await FetchLinkService.filter(query);
+    }
     if (fetchLinkResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-FETCHLINK-01"].includes(fetchLinkResult.error.code)
-          ? HttpCode.OK
-          : HttpCode.INTERNAL_SERVER_ERROR,
+        HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
         fetchLinkResult.error.code,

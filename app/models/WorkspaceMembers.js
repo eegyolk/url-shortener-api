@@ -11,6 +11,49 @@ class WorkspaceMembers extends Model {
     EDITOR: "Editor", // can read/edit
     VIEWER: "Viewer", // can read only
   };
+
+  static get relationMappings() {
+    const Users = require("./Users");
+    const Workspaces = require("./Workspaces");
+
+    return {
+      workspace: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Workspaces,
+        join: {
+          from: `${this.tableName}.workspace_id`,
+          to: `${Workspaces.tableName}.id`,
+        },
+      },
+
+      ownerUser: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Users,
+        join: {
+          from: `${this.tableName}.owner_user_id`,
+          to: `${Users.tableName}.id`,
+        },
+      },
+
+      creatorUser: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Users,
+        join: {
+          from: `${this.tableName}.creator_user_id`,
+          to: `${Users.tableName}.id`,
+        },
+      },
+
+      user: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Users,
+        join: {
+          from: `${this.tableName}.user_id`,
+          to: `${Users.tableName}.id`,
+        },
+      },
+    };
+  }
 }
 
 module.exports = WorkspaceMembers;

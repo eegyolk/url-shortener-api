@@ -27,6 +27,19 @@ class Workspaces extends Model {
       },
     };
   }
+
+  static modifiers = {
+    selectWorkspaceForWorkspaceMembers(query) {
+      const { ref } = Workspaces;
+
+      query.select(
+        ref("id"),
+        ref("name"),
+        ref("space_character"),
+        ref("description")
+      );
+    },
+  };
 }
 
 module.exports = Workspaces;

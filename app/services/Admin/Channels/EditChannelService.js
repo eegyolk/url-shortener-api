@@ -11,12 +11,14 @@ const rules = {
   name: "required|string",
   platform: "required|string",
   identifier: "required|string",
+  description: "present|string",
+  iconUrl: "present|string",
 };
 
 const errors = {
   1: {
     code: "ERR-EDITCHANNEL-01",
-    message: "Workspace, owner, and creator are unrelated to each other.",
+    message: "Workspace, owner, and editor are unrelated to each other.",
   },
   2: {
     code: "ERR-EDITCHANNEL-02",
@@ -30,6 +32,7 @@ const errors = {
 
 const editChannel = async body => {
   const {
+    id,
     ownerUserId,
     editorUserId,
     workspaceId,
@@ -67,12 +70,13 @@ const editChannel = async body => {
     name,
     platform,
     identifier,
+    updated_at: moment().format(),
   };
   if (description) {
     patchData["description"] = description;
   }
   if (iconUrl) {
-    patchData["iconUrl"] = iconUrl;
+    patchData["icon_url"] = iconUrl;
   }
 
   const editedChannel = await Channels.query().patchAndFetchById(id, patchData);

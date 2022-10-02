@@ -19,7 +19,7 @@ const editTag = async (req, res) => {
     const editTagResult = await EditTagService.editTag(body);
     if (editTagResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-EDITTAG-01"].includes(editTagResult.error.code)
+        ["ERR-EDITTAG-01", "ERR-EDITTAG-02"].includes(editTagResult.error.code)
           ? HttpCode.OK
           : HttpCode.INTERNAL_SERVER_ERROR,
         0,

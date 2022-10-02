@@ -146,7 +146,7 @@ const filter = async query => {
   }
   if (createdAtFrom && createdAtTo) {
     queryBuilder.whereRaw(
-      `DATE(created_at) BETWEEN '${createdAtFrom}' AND '${createdAtTo}'`
+      `DATE(created_at) BETWEEN "${createdAtFrom}" AND "${createdAtTo}"`
     );
   }
 

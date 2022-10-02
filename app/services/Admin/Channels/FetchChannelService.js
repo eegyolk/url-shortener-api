@@ -97,7 +97,7 @@ const search = async query => {
   const channels = await Channels.query()
     .where("owner_user_id", ownerUserId)
     .where("workspace_id", workspaceId)
-    .whereRaw(`name LIKE "${name}%"`)
+    .whereRaw(`name LIKE "%${name}%"`)
     .page(page - 1, pageSize);
   if (!channels) {
     return { error: errors[2] };
@@ -122,7 +122,7 @@ const filter = async query => {
 
   if (createdAtFrom && createdAtTo) {
     queryBuilder.whereRaw(
-      `DATE(created_at) BETWEEN '${createdAtFrom}' AND '${createdAtTo}'`
+      `DATE(created_at) BETWEEN "${createdAtFrom}" AND "${createdAtTo}"`
     );
   }
 

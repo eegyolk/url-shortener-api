@@ -105,7 +105,7 @@ const search = async query => {
   const links = await Links.query()
     .where("owner_user_id", ownerUserId)
     .where("workspace_id", workspaceId)
-    .whereRaw(`site_title LIKE "${siteTitle}%"`)
+    .whereRaw(`site_title LIKE "%${siteTitle}%"`)
     .page(page - 1, pageSize);
   if (!links) {
     return { error: errors[2] };
@@ -140,14 +140,14 @@ const filter = async query => {
     queryBuilder.whereIn("domain", domain);
   }
   if (slashTag) {
-    queryBuilder.whereRaw(`slash_tag LIKE '${slashTag}%'`);
+    queryBuilder.whereRaw(`slash_tag LIKE "%${slashTag}%"`);
   }
   if (tags) {
-    queryBuilder.whereRaw(`JSON_CONTAINS(tags, '${JSON.stringify(tags)}')`);
+    queryBuilder.whereRaw(`JSON_CONTAINS(tags, "${JSON.stringify(tags)}")`);
   }
   if (channels) {
     queryBuilder.whereRaw(
-      `JSON_CONTAINS(channels, '${JSON.stringify(channels)}')`
+      `JSON_CONTAINS(channels, "${JSON.stringify(channels)}")`
     );
   }
   if (utmSource) {
@@ -157,14 +157,14 @@ const filter = async query => {
     queryBuilder.whereIn("utm_medium", utmMedium);
   }
   if (utmCampaign) {
-    queryBuilder.whereRaw(`utm_campaign LIKE '${utmCampaign}%'`);
+    queryBuilder.whereRaw(`utm_campaign LIKE "%${utmCampaign}%"`);
   }
   if (isActive) {
     queryBuilder.where("isActive", isActive);
   }
   if (createdAtFrom && createdAtTo) {
     queryBuilder.whereRaw(
-      `DATE(created_at) BETWEEN '${createdAtFrom}' AND '${createdAtTo}'`
+      `DATE(created_at) BETWEEN "${createdAtFrom}" AND "${createdAtTo}"`
     );
   }
 

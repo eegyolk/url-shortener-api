@@ -135,11 +135,11 @@ const filter = async query => {
     queryBuilder.whereIn("utm_medium", utmMedium);
   }
   if (utmCampaign) {
-    queryBuilder.whereRaw(`utm_campaign LIKE '${utmCampaign}%'`);
+    queryBuilder.whereRaw(`utm_campaign LIKE "${utmCampaign}%"`);
   }
   if (createdAtFrom && createdAtTo) {
     queryBuilder.whereRaw(
-      `DATE(created_at) BETWEEN '${createdAtFrom}' AND '${createdAtTo}'`
+      `DATE(created_at) BETWEEN "${createdAtFrom}" AND "${createdAtTo}"`
     );
   }
 

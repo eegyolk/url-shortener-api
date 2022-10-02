@@ -1,5 +1,3 @@
-const moment = require("moment");
-
 const Links = require("../../../models/Links");
 
 const types = {

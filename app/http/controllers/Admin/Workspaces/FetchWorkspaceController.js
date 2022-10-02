@@ -9,21 +9,56 @@ const Validation = require("../../../../helpers/Validation");
 const FetchWorkspaceService = require("../../../../services/Admin/Workspaces/FetchWorkspaceService");
 
 const fetchWorkspace = async (req, res) => {
-  const { body, session } = req;
-  const rules = FetchWorkspaceService.rules;
+  const { params, query, session } = req;
 
   try {
-    const validation = new Validation(body, rules);
-    validation.validate();
+    const getTypeResult = FetchWorkspaceService.getType(params.value);
+    if (getTypeResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        getTypeResult.error.code,
+        getTypeResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
-    const fetchWorkspaceResult = await FetchWorkspaceService.fetchWorkspace(
-      body
-    );
+    let fetchWorkspaceResult = {};
+    if (FetchWorkspaceService.types.ALL === getTypeResult.type) {
+      const validation = new Validation(query, FetchWorkspaceService.rules.all);
+      validation.validate();
+
+      fetchWorkspaceResult = await FetchWorkspaceService.all(query);
+    } else if (FetchWorkspaceService.types.SINGLE === getTypeResult.type) {
+      const validation = new Validation(
+        query,
+        FetchWorkspaceService.rules.single
+      );
+      validation.validate();
+
+      fetchWorkspaceResult = await FetchWorkspaceService.single(query);
+    } else if (FetchWorkspaceService.types.SEARCH === getTypeResult.type) {
+      const validation = new Validation(
+        query,
+        FetchWorkspaceService.rules.search
+      );
+      validation.validate();
+
+      fetchWorkspaceResult = await FetchWorkspaceService.search(query);
+    } else if (FetchWorkspaceService.types.FILTER === getTypeResult.type) {
+      const validation = new Validation(
+        query,
+        FetchWorkspaceService.rules.filter
+      );
+      validation.validate();
+
+      fetchWorkspaceResult = await FetchWorkspaceService.filter(query);
+    }
     if (fetchWorkspaceResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-FETCHWORKSPACE-01"].includes(fetchWorkspaceResult.error.code)
-          ? HttpCode.OK
-          : HttpCode.INTERNAL_SERVER_ERROR,
+        HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
         fetchWorkspaceResult.error.code,

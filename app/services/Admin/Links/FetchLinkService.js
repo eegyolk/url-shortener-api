@@ -157,7 +157,7 @@ const filter = async query => {
     queryBuilder.whereIn("utm_medium", utmMedium);
   }
   if (utmCampaign) {
-    queryBuilder.whereRaw(`slash_tag LIKE '${utmCampaign}%'`);
+    queryBuilder.whereRaw(`utm_campaign LIKE '${utmCampaign}%'`);
   }
   if (isActive) {
     queryBuilder.where("isActive", isActive);

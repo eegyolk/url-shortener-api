@@ -19,7 +19,9 @@ const editDomain = async (req, res) => {
     const editDomainResult = await EditDomainService.editDomain(body);
     if (editDomainResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-EDITDOMAIN-01"].includes(editDomainResult.error.code)
+        ["ERR-EDITDOMAIN-01", "ERR-EDITDOMAIN-02"].includes(
+          editDomainResult.error.code
+        )
           ? HttpCode.OK
           : HttpCode.INTERNAL_SERVER_ERROR,
         0,

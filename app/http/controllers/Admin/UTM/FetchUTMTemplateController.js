@@ -9,22 +9,59 @@ const Validation = require("../../../../helpers/Validation");
 const FetchUTMTemplateService = require("../../../../services/Admin/UTM/FetchUTMTemplateService");
 
 const fetchUTMTemplate = async (req, res) => {
-  const { body, session } = req;
-  const rules = FetchUTMTemplateService.rules;
+  const { params, query, session } = req;
 
   try {
-    const validation = new Validation(body, rules);
-    validation.validate();
+    const getTypeResult = FetchUTMTemplateService.getType(params.value);
+    if (getTypeResult.hasOwnProperty("error")) {
+      const responseObject = new ResponseObject(
+        HttpCode.INTERNAL_SERVER_ERROR,
+        0,
+        undefined,
+        getTypeResult.error.code,
+        getTypeResult.error.message
+      );
+      res.status(responseObject.getHttpCode()).json(responseObject.getData());
+      return;
+    }
 
-    const fetchUTMTemplateResult =
-      await FetchUTMTemplateService.fetchUTMTemplate(body);
+    let fetchUTMTemplateResult = {};
+    if (FetchUTMTemplateService.types.ALL === getTypeResult.type) {
+      const validation = new Validation(
+        query,
+        FetchUTMTemplateService.rules.all
+      );
+      validation.validate();
+
+      fetchUTMTemplateResult = await FetchUTMTemplateService.all(query);
+    } else if (FetchUTMTemplateService.types.SINGLE === getTypeResult.type) {
+      const validation = new Validation(
+        query,
+        FetchUTMTemplateService.rules.single
+      );
+      validation.validate();
+
+      fetchUTMTemplateResult = await FetchUTMTemplateService.single(query);
+    } else if (FetchUTMTemplateService.types.SEARCH === getTypeResult.type) {
+      const validation = new Validation(
+        query,
+        FetchUTMTemplateService.rules.search
+      );
+      validation.validate();
+
+      fetchUTMTemplateResult = await FetchUTMTemplateService.search(query);
+    } else if (FetchUTMTemplateService.types.FILTER === getTypeResult.type) {
+      const validation = new Validation(
+        query,
+        FetchUTMTemplateService.rules.filter
+      );
+      validation.validate();
+
+      fetchUTMTemplateResult = await FetchUTMTemplateService.filter(query);
+    }
     if (fetchUTMTemplateResult.hasOwnProperty("error")) {
       const responseObject = new ResponseObject(
-        ["ERR-FETCHUTMPARAMETERTEMPLATE-01"].includes(
-          fetchUTMTemplateResult.error.code
-        )
-          ? HttpCode.OK
-          : HttpCode.INTERNAL_SERVER_ERROR,
+        HttpCode.INTERNAL_SERVER_ERROR,
         0,
         undefined,
         fetchUTMTemplateResult.error.code,
